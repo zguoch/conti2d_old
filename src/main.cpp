@@ -13,19 +13,6 @@ bool isNum(string str)
         return false;
     return true;
 }
-void testOMP()
-{
-    int index=0;
-    omp_set_num_threads(3);
-    #pragma omp parallel for shared(index)
-	for (int i = 0; i < 10; i++)
-    {
-        
-        printf("i = %d, I am Thread %d\n", i, index);
-        index++;
-    }
-		
-}
 int main(int argc, char* argv[])
 {
     struct winsize w;
@@ -39,8 +26,7 @@ int main(int argc, char* argv[])
     }
     helpINFO();
     
-    //testOMP();
-//********************************************
+    //********************************************
     string inputfilename;
     string outputfilename;
     string topo1;
@@ -49,19 +35,18 @@ int main(int argc, char* argv[])
     double height2=0;
     bool isDownwardConti=false;
     bool isFrequency=false;
-    // double TRP=0.00001;
     int num_inputdata=0;
-    bool isplane1=true;  //0:plane to plane; 1:plane to uneven; 2:uneven to plane; 3:uneven to uneven
+    bool isplane1=true;                             //0:plane to plane; 1:plane to uneven; 2:uneven to plane; 3:uneven to uneven
     bool isplane2=true;
-    bool isProgress=true;  //是否显示计算进度，用-p参数控制
-    int num_thread=omp_get_max_threads(); //default using all available threads
-    bool debug_kernel_old=false;//默认不适用老的核矩阵
-    string filename_exact="";//exact solution file name
-    double DWC_parameter=-1;//CGLS收敛条件; //正则化参数; //积分迭代发的迭代次数
-    int method_DWC=DWC_INTEGRALITERATION;//默认使用积分迭代发下延
-    int extNumber=0;//扩边多少个点距
+    bool isProgress=true;                           //true: show progress in terminal; false: no progress information
+    int num_thread=omp_get_max_threads();           //default using all available threads
+    bool debug_kernel_old=false;                    //not use old kernal in default
+    string filename_exact="";                       //exact solution file name
+    double DWC_parameter=-1;                        //condition of convergence for CGLS; //regulazition parameter; //iteration numbber
+    int method_DWC=DWC_INTEGRALITERATION;           //using Intergal Iteration method for download continuation
+    int extNumber=0;                                //extended points
 //********************************************
-    //option
+    //options
     for (int i=1; i<argc; i++)
     {
         string s(argv[i]);

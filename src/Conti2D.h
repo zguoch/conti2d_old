@@ -1,10 +1,8 @@
 //
-//  Conti3D.h
-//  Conti3D
+//  Conti2D.h
+//  Conti2D
 //
-//  Created by 郭志馗 on 2017/2/1.
-//  Copyright © 2017年 Zhikui Guo. All rights reserved.
-//
+//  Created by Zhikui Guo on 2017/2/1.
 
 #ifndef Conti3D_h
 #define Conti3D_h
@@ -17,9 +15,6 @@
 using namespace std;
 #include <math.h>
 #include "omp.h"
-// #include <mkl.h>
-// #include "errcheck.inc"
-// #include "generatedata.inc"
 #include "FFTN.h"
 #include "MultiProgressBar.h"
 
@@ -30,8 +25,6 @@ using namespace std;
 #define DWC_INTEGRALITERATION 3
 #define DWC_LANDWEBER 4
 
-//global variables
-//define text color
 #define ERROR_COUT "["<<"\033[31mError"<<"\033[0m] "
 #define WARN_COUT "["<<"\033[33mWarning"<<"\033[0m] "
 #define ERROR_COUT "["<<"\033[31mError"<<"\033[0m] "
@@ -43,43 +36,98 @@ using namespace std;
 #define COLOR_DEFALUT "\033[0m"
 #include <unistd.h>
 #define MOVEUP(x) printf("\033[%dA", (x))
-// 清除屏幕 
+// clean screen
 #define CLEAR() printf("\033[2J") 
-// 上移光标 
+// move up cursor
 #define MOVEUP(x) printf("\033[%dA", (x)) 
-// 下移光标 
+// move down cursor
 #define MOVEDOWN(x) printf("\033[%dB", (x)) 
-// 左移光标 
+// move left cursor
 #define MOVELEFT(y) printf("\033[%dD", (y)) 
-// 右移光标 
+// move right cursor
 #define MOVERIGHT(y) printf("\033[%dC",(y)) 
-// 定位光标 
+// locate cursor
 #define MOVETO(x,y) printf("\033[%d;%dH", (x), (y)) 
-// 光标复位 
+// reset cursor
 #define RESET_CURSOR() printf("\033[H") 
-// 隐藏光标 
+// hide cursor
 #define HIDE_CURSOR() printf("\033[?25l") 
-// 显示光标 
+// show cursor
 #define SHOW_CURSOR() printf("\033[?25h") 
-//反显
 #define HIGHT_LIGHT() printf("\033[7m")
 #define UN_HIGHT_LIGHT() printf("\033[27m")
 ////////////////////////////////////
+
+/**
+ * @brief head information of a grid data, e.g. Goldernsoftward Surfer Grid.
+ * 
+ */
+
 struct GrdHead
 {
     int cols, rows;
     double bounds[6];
 };
-// int Derivative1d_col(double* data,GrdHead grdhead,double *der);
-// int Derivative1d_row(double* data,GrdHead grdhead,double *der);
-// double* ReadGrd(char* filename,GrdHead& grdhead);
+/**
+ * @brief Read a Surfer Grid data from file
+ * 
+ * @param filename 
+ * @param grdhead 
+ * @param extNum 
+ * @return double* return data array
+ */
 double* ReadGrd(string filename,GrdHead& grdhead,int extNum);
-// bool SaveGrd(char* filename, GrdHead grdhead,double* data, bool savexxyz=false,bool isInfo=true);
+/**
+ * @brief Save a Surfer Grid data to file
+ * 
+ * @param filename 
+ * @param grdhead 
+ * @param data 
+ * @param extNum 
+ * @param savexxyz true: save xyz format simultaneously
+ * @param isInfo 
+ * @return true 
+ * @return false 
+ */
 bool SaveGrd(string filename, GrdHead grdhead,double* data,int extNum, bool savexxyz=false,bool isInfo=true);
+/**
+ * @brief Get the Kernal Matrix object
+ * 
+ * @param grdhead 
+ * @param G 
+ * @param rph 
+ * @param num_thread 
+ */
 void GetKernalMatrix(GrdHead grdhead, double* G, const double rph, int num_thread=4);
+/**
+ * @brief Get the kernel matrix using the new developed formula
+ * 
+ * @param grdhead 
+ * @param G a 1-d array to store the kernel matrix
+ * @param rph height of continuation
+ * @param num_thread 
+ */
 void GetKernalMatrix_new(GrdHead grdhead, double* G, const double rph, int num_thread=4);
+/**
+ * @brief Get the value at i row and the j column of kernel matrix from the first row of the matrix only.
+ * 
+ * @param i 
+ * @param j 
+ * @param firstRow The first row of the kernel matrix
+ * @param grdhead 
+ * @return double 
+ */
 double GetGij(const int i, const int j, double* firstRow, const GrdHead grdhead);
-//1. UWC: plane to plane
+
+/**
+ * @brief Upward continue from plane to plane
+ * 
+ * @param grdhead 
+ * @param rph 
+ * @param kernel 
+ * @param num_thread 
+ * @return int 
+ */
 int Getkernel_p2p(GrdHead grdhead, double rph, double** kernel, int num_thread);
 int Getkernel_p2p_new(GrdHead grdhead, double rph, double* kernel_firstRow, int num_thread);
 int Getkernel_p2p_new(GrdHead grdhead, double rph, double** kernel, int num_thread);
