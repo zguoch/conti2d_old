@@ -1,4 +1,4 @@
-//将FFTW进行一定的封装，使其更好用
+
 
 #include "fftw3.h"
 #include "vector"

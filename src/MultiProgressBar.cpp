@@ -42,10 +42,7 @@ MultiProgressBar::MultiProgressBar(vector<double> left, vector<double> right, ve
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
     m_length_bar = w.ws_col - 35;
-    // if (m_length_bar > 50)
-    // {
-    //     m_length_bar = 50;
-    // }
+
     init_colors();
     if (right.size() != left.size())
     {

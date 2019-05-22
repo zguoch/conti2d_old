@@ -139,8 +139,16 @@ void UWC_p2p_f(string inputfilename,string outputfilename,double height1,double 
 int UWC_p2p_f(double* inputdata,double* result,GrdHead grdhead,double rph);
 
 //2. UWC: uneven surface to plane
-// double* GetNz(GrdHead grdhead, double* terrain);
-// int GetNxyz(GrdHead grdhead, double* terrain, double* nx,double* ny,double* nz);
+/**
+ * @brief Upward continue from surface to plane
+ * 
+ * @param grdhead 
+ * @param terrain1 2-D array of terrain of the surface
+ * @param height2 Height of upward continuation
+ * @param kernel 
+ * @param num_thread 
+ * @return int 
+ */
 int Getkernel_u2p(GrdHead grdhead, double* terrain1, double height2, double** kernel, int num_thread);
 int Getkernel_u2p_new(GrdHead grdhead, double* terrain1, double height2,
                     double* nx,double* ny,double* nz, 
@@ -154,63 +162,129 @@ void UWC_Gij(double* b, double* G,double* x, GrdHead grdhead, int num_thread=1);
 void UWC_Gji(double* b, double* G,double* x, GrdHead grdhead, int num_thread=1);
 void UWC_Gij(double* b,double** G,double* x, int modelnum,int num_thread=1);
 //compute: b=(GT*G+lamubda*I)*x == b=M*x
-//正则化之后的复杂系数矩阵与向量的乘积
 void UWC_G_CGLS_Tik(double* b,double** G,double* x, int modelnum,double lambda2,int num_thread=1);
 void UWC_Gji(double* b,double** G,double* x, int modelnum,int num_thread=1);
 // 3. DWC: Plane to plane
+/**
+ * @brief Downward continue from plane to plane
+ * 
+ * @param inputfilename Input file name of grid data 
+ * @param outputfilename Output file name of the downward continuation result
+ * @param height1 
+ * @param filename_topo2 
+ */
 void DWC_u2p(string inputfilename,string outputfilename,double height1,string filename_topo2);
 void DWC_p2p_f(string inputfilename,string outputfilename,double height1,
     double height2,int extNum,double TRP, int num_thread, bool isProgress,bool useOldKernel);
 void DWC_p2p(string inputfilename,string outputfilename,double height1,
     double height2,int extNum,double DWC_parameter,int DWC_method, int num_thread, bool isProgress,bool useOldKernel,
     string filename_exact);
-//4. UWC: Plane to surface
+/**
+ * @brief Upward continuation from plane to surface
+ * 
+ * @param inputfilename 
+ * @param outputfilename 
+ * @param height1 
+ * @param topoFile 
+ * @param extNum 
+ * @param num_thread 
+ * @param isProgress 
+ * @param useOldKernel 
+ * @param filename_exact 
+ */
 void UWC_p2s(string inputfilename,string outputfilename,
     double height1,string topoFile,int extNum, int num_thread, bool isProgress,
     bool useOldKernel,string filename_exact);
-//5. DWC: surface to plane
+/**
+ * @brief downward continuation from surface to plane
+ * 
+ * @param inputfilename 
+ * @param outputfilename 
+ * @param topo1 
+ * @param height2 
+ * @param extNum 
+ * @param DWC_parameter 
+ * @param DWC_method 
+ * @param num_thread 
+ * @param isProgress 
+ * @param useOldKernel 
+ * @param filename_exact 
+ */
 void DWC_s2p(string inputfilename,string outputfilename,string topo1,
     double height2,int extNum,double DWC_parameter,int DWC_method, int num_thread, bool isProgress,bool useOldKernel,
     string filename_exact);
-//不同方法的向下延拓求解函数
+
 void DWC_Tikhonov_old(double* G_firstRow,double* dataout,double* indata,double TRP,int kmax,double daierta,GrdHead grdhead,int num_thread);
 void DWC_p2p_CGLS(double* G_firstRow,double* x, double* b,GrdHead grdhead,int extNum,double delta,int num_thread);
 void DWC_s2p_CGLS(double** G,double* x, double* b,GrdHead grdhead,int extNum,double delta,int num_thread);
 void DWC_s2p_Tikhonov(double** G,double* x, double* b,GrdHead grdhead,int extNum,double lambda,int num_thread);
-//积分迭代发
+
 void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     GrdHead grdhead,int extNum,int num_thread,string outputfile,double iter_number,double* ExactSolution=NULL);
 void DWC_p2p_ItegrationIter(double* G,double* x, double* b,
     GrdHead grdhead,int extNum,int num_thread,string outputfile,double iter_number,double* ExactSolution=NULL);
-//landweber迭代法
+
 void DWC_p2p_LandweberIter(double* G,double* x, double* b,
     GrdHead grdhead,int extNum,int num_thread,string outputfile,double iter_number,double* ExactSolution=NULL);
 void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     GrdHead grdhead,int extNum,int num_thread,string outputfile,double iter_number,double* ExactSolution=NULL);
 
 double Norm2(double* x,const int num);
-//分析文件名和路径
-//input: figures/figure_uwc_p2p.ps
-//output:figure_uwc_p2p
+
+/**
+ * @brief Get file name from a full path, e.g. figures/figure_uwc_p2p.ps  -> figure_uwc_p2p
+ * 
+ * @param filepath 
+ * @return string 
+ */
 string Path_GetBaseName(string filepath);
-//input: figures/figure_uwc_p2p.ps
-//output:ps
+
+/**
+ * @brief Get file extension name from a full file path. e.g. figures/figure_uwc_p2p.ps -> ps
+ * 
+ * @param filepath 
+ * @return string 
+ */
 string Path_GetExtName(string filepath);
-//input: figures/figure_uwc_p2p.ps
-//output:figures
+
+/**
+ * @brief Get file path from a full path. e.g. figures/figure_uwc_p2p.ps -> figures/figure_uwc_p2p
+ * 
+ * @param filepath 
+ * @return string 
+ */
 string Path_GetPath(string filepath);
-//input: figures/figure_uwc_p2p.ps
-//output:figures/figure_uwc_p2p
+/**
+ * @brief Get file name from a full path. e.g. figures/figure_uwc_p2p.ps -> figures
+ * 
+ * @param filepath 
+ * @return string 
+ */
 string Path_GetFileName(string filepath);
-//求结果的梯度的二范数，看看平滑情况
+
+/**
+ * @brief Get 2nd norm of the gradient of a grid data
+ * 
+ * @param result 
+ * @param grdhead 
+ * @return double 
+ */
 double Norm2_Gradient(double* result,GrdHead grdhead);
 //保存中间结果为时间序列的vtk格式
+/**
+ * @brief Save results of at each iteration step as vtk file
+ * 
+ * @param outputfile 
+ * @param grdhead 
+ * @param data 
+ * @return int 
+ */
 int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data);
-//start text
+
 static void StartText()
 {
-    //30:黑  31:红  32:绿  33:黄  34:蓝色  35:紫色  36:深绿
-    cout<<"\033[33m";       //开启黄色
+    //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
+    cout<<"\033[33m";       //print text in yellow color
     cout << "***************************************************\n";
     cout << "*                 program conti2d                 *\n";
     cout << "*                 ~~~~~~~ ~~~~~~~                 *\n";
@@ -251,7 +325,7 @@ static void helpINFO()
     // char* now_str=ctime(&now);
     string now_str="Aug 8, 2016";
 
-    //30:黑  31:红  32:绿  33:黄  34:蓝色  35:紫色  36:深绿
+    //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
     cout<<"===================== conti2d ======================"<<endl;
     cout<<"Analytical continuation of potential field data"<<endl;
     cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Author \033[032m"<<author<<"\033[0m"<<endl;
@@ -292,7 +366,7 @@ static void StartText_artASCII()
 //error info
 static void OutputErrorinfo(string info)
 {
-    cout<<"\033[31m";       //开启红色
+    cout<<"\033[31m";       //print error infor in red color
     cout<<info<<endl;
     cout<<"\033[0m";
     exit(0);
@@ -300,9 +374,9 @@ static void OutputErrorinfo(string info)
 //warning info
 static void OutputWarninginfo(string info)
 {
-    cout<<"\033[34m";       //开启蓝色
+    cout<<"\033[34m";       //print warning info as blue color
     cout<<info<<endl;
     cout<<"\033[0m";
 }
 
-#endif /* Conti3D_h */
+#endif 

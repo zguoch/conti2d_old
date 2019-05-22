@@ -142,15 +142,15 @@ void GetKernalMatrix(GrdHead grdhead, double* G, const double rph, int num_threa
      int modelnum = grdhead.rows*grdhead.cols;
     int index_row=0;
     int index_col=0;  
-    row_block = i / grdhead.cols;						//所在块的行数
-    colum_block = j / grdhead.cols;					//所在块的列数
-    index_row=i-row_block*grdhead.cols;                 //在块中的行坐标
-    index_col=j-colum_block*grdhead.cols;               //在宽终的列坐标
-    // cout<<"行: "<<i<<"*"<<j<<endl;
-    // cout<<"块: "<<row_block<<"*"<<colum_block<<endl;
-    // cout<<"坐标: "<<index_row<<"*"<<index_col<<endl;
-    int index_block=abs(row_block-colum_block);         //所在块对应第一行的第几个块
-    int col0=abs(index_row-index_col);                  //在所在的块中，其元素坐标对应的这个块中第一行的第几列
+    row_block = i / grdhead.cols;						
+    colum_block = j / grdhead.cols;					
+    index_row=i-row_block*grdhead.cols;                 
+    index_col=j-colum_block*grdhead.cols;               
+    // cout<<"row: "<<i<<"*"<<j<<endl;
+    // cout<<"block: "<<row_block<<"*"<<colum_block<<endl;
+    // cout<<"coordinate: "<<index_row<<"*"<<index_col<<endl;
+    int index_block=abs(row_block-colum_block);         
+    int col0=abs(index_row-index_col);                 
     Gij=firstRow[index_block*grdhead.cols+col0];
      return Gij;
  }
@@ -236,7 +236,6 @@ int Getkernel_p2p(GrdHead grdhead, double rph, double** kernel, int num_thread)
 }
 int Getkernel_p2s_new(GrdHead grdhead, double h1,double* topo2, double** kernel, int num_thread)
 {
-    //平面到曲面的向上延拓矩阵，对曲面到平面的向下延拓也适用
     cout<<"new kernel of plane to surface: "<<num_thread<<" threads are used"<<endl;
     double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
@@ -270,7 +269,6 @@ int Getkernel_p2s_new(GrdHead grdhead, double h1,double* topo2, double** kernel,
 }
 int Getkernel_p2p_new(GrdHead grdhead, double rph, double** kernel, int num_thread)
 {
-    //平面到曲面的向上延拓矩阵，对曲面到平面的向下延拓也适用
     cout<<"new kernel of plane to surface: "<<num_thread<<" threads are used"<<endl;
     double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
@@ -301,7 +299,7 @@ int Getkernel_p2p_new(GrdHead grdhead, double rph, double** kernel, int num_thre
     }cout<<"\n";
     return 0;
 }
-//新的核矩阵可以避免延拓高度小的情况下出错，分段积分得到的结果
+
 int Getkernel_p2p_new(GrdHead grdhead, double rph, double* kernel_firstRow, int num_thread)
 {
     cout<<"calculating first row of new kernel"<<endl;
@@ -355,13 +353,6 @@ void UWC_p2s(string inputfilename,string outputfilename,
     {
         Getkernel_p2s_new(grdhead,height1,topo,G,num_thread);
     }
-    // for(int i=0;i<5;i++)
-    // {
-    //     cout<<G[0][i]<<"  ";
-    //     cout<<indata[i]<<endl;
-
-    // }
-
     // //4. outdata
     double *outdata=new double[modelnum];
     //compute UWC
@@ -417,7 +408,7 @@ void UWC_p2p(string inputfilename,string outputfilename,
     cout<<"calculating kernal matrix"<<endl;
     if(useOldKernel)
     {
-        cout<<"暂时关闭old kernel计算"<<endl;
+        cout<<"The old kernel function is  depressed "<<endl;
         exit(0);
         // Getkernel_p2p(grdhead,rph,G,num_thread);
     }else
@@ -430,25 +421,7 @@ void UWC_p2p(string inputfilename,string outputfilename,
     //compute UWC
     cout<<"calculating uwc: "<<num_thread<<" threads are used"<<endl;
     UWC_Gij(outdata,G_firstRow, indata,grdhead,num_thread);
-    // ProgressBar bar0(modelnum);
-    // //omp parallel
-    // omp_set_num_threads(num_thread);
-    // #pragma omp parallel for shared(outdata,indata,modelnum)
-    // for (int i = 0; i < modelnum; i++)
-    // {
-    //     outdata[i] = 0;
-    //     for (int j = 0; j < modelnum; j++)
-    //     {
-    //         // outdata[i] += G[i][j]*indata[j];
-    //         outdata[i] += GetGij(i,j,G_firstRow,grdhead)*indata[j];
-    //     }
-    //     #pragma omp critical
-    //     //output progress
-    //     bar0.Update();
-    // }cout<<"\n";
-
     cout << "Finished\n";
-    
     //4. write result
     if (!SaveGrd(outputfilename, grdhead, outdata,extNum,true))return ;
     //5. compute error if exact solution is given
@@ -468,10 +441,6 @@ void UWC_p2p(string inputfilename,string outputfilename,
     delete[] indata;
     delete[] outdata;
     delete[] G_firstRow;
-    // for(int i=0; i<modelnum; i++)
-    // {
-    //     delete[] G[i];
-    // }delete[] G;
 }
 /*===============================================================================
  Upward continuation: plane to plane(frequency domain)
@@ -532,8 +501,7 @@ int UWC_p2p_f(double* inputdata,double* result,GrdHead grdhead,double rph)
 	int number_x_half = (int)(number_x / 2);
 	int number_y_half = (int)(number_y / 2);
 	int index_ij;
-	//乘以频率域因子改变傅里叶变换系数
-	//1. v为正
+
 	for (int i = 0; i <= number_y_half; i++)
 	{
 		v = i / en;
@@ -576,7 +544,6 @@ int UWC_p2p_f(double* inputdata,double* result,GrdHead grdhead,double rph)
 			out_c[index_ij][1] = out_c[index_ij][1] * factor_conti;
 		}
 	}
-	//逆变换
 	IFFT2d(number_y, number_x, out_c, result);
     return 1;
 }
@@ -621,8 +588,9 @@ int Getkernel_u2p(GrdHead grdhead, double* terrain1, double height2, double** ke
     }
     return 1;
 }
-//同时获取nx，ny，nz并返回一个3xn数组
-//参考(Syberg, 1971; H. Granser, 1983; Bhattacharyya and Chan, 1977)
+
+//refer (Syberg, 1971; H. Granser, 1983; Bhattacharyya and Chan, 1977)
+// maybe wrong, not used in the program
 int Getkernel_u2p_new(GrdHead grdhead, double* terrain1, double height2,
                     double* nx,double* ny,double* nz, 
                     double** kernel, int num_thread)
@@ -635,8 +603,8 @@ int Getkernel_u2p_new(GrdHead grdhead, double* terrain1, double height2,
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
     double dx_2=dx/2.0, dy_2=dy/2.0;
     double x1=0,x2=0,y1=0,y2=0;
-    double x1x1=0,x2x2=0,y1y1=0,y2y2=0;//平方
-    double fabs_x1,fabs_x2,fabs_y1,fabs_y2;//绝对值
+    double x1x1=0,x2x2=0,y1y1=0,y2y2=0;//
+    double fabs_x1,fabs_x2,fabs_y1,fabs_y2;//
     double x0=0,y0=0;
     double p22=0,p11=0,p12=0,p21=0;
     double rph_2=0;
@@ -682,7 +650,7 @@ int Getkernel_u2p_new(GrdHead grdhead, double* terrain1, double height2,
                     p11=atan2(x1*y1,rph*sqrt(rph_2+x1x1+y1y1));
                     p12=atan2(x1*y2,rph*sqrt(rph_2+x1x1+y2y2));
                     p21=atan2(x2*y1,rph*sqrt(rph_2+x2x2+y1y1));
-                    P1=(p22+p11-p21-p12)*nz[index_nxyz];//最难的那个积分
+                    P1=(p22+p11-p21-p12)*nz[index_nxyz];//
                     //-----------
                     fabs_y1=fabs(y1);
                     fabs_y2=fabs(y2);
@@ -712,7 +680,6 @@ int Getkernel_u2p_new(GrdHead grdhead, double* terrain1, double height2,
     
     return 1;
 }
-
 
 /*===============================================================================
  Read surfer grd text file
@@ -763,8 +730,7 @@ double* ReadGrd(string filename, GrdHead& grdhead,int extNum)
             fin >> data[j+grdhead.cols*i];
         }
     }
-    //直接扩边，对边界延续
-    //先扩展x方向（也就是列方向）
+    //extend as zero
     int index0=extNum;
     for(int i=0;i<extNum;i++)
     {
@@ -781,7 +747,7 @@ double* ReadGrd(string filename, GrdHead& grdhead,int extNum)
             data[j+grdhead.cols*i]=data[index0+grdhead.cols*i];
         }
     }
-    //对y方向扩边（行方向)
+    //extend y direction (row direction)
     index0=extNum;
     for(int i=0;i<grdhead.cols;i++)
     {
@@ -875,12 +841,9 @@ bool SaveGrd(string filename, GrdHead grdhead, double* data,int extNum, bool sav
     }
     return true;
 }
-//计算：dataout=Gji*datain，相当于计算向上延托（AT * x=b): 更普适的情况，kernel的全矩阵
+//dataout=Gji*datain，
 void UWC_Gji(double* b,double** G,double* x, int modelnum,int num_thread)
 {
-    // ProgressBar bar0(modelnum);
-    //omp parallel
-    // cout << "b=AT*x: "<<num_thread<<" threads"<<endl;
     omp_set_num_threads(num_thread);
     #pragma omp parallel for shared(b,x,modelnum)
     for (int i = 0; i < modelnum; i++)
@@ -890,18 +853,12 @@ void UWC_Gji(double* b,double** G,double* x, int modelnum,int num_thread)
         {
             b[i] += G[j][i]*x[j];
         }
-        //output progress
-        // #pragma omp critical
-        // bar0.Update();
     }
     // cout<<"\n";
 }
-//计算：dataout=Gij*datain，相当于计算向上延托（A * x=b): 更普适的情况，kernel的全矩阵
+
 void UWC_Gij(double* b,double** G,double* x, int modelnum,int num_thread)
 {
-    // ProgressBar bar0(modelnum);
-    //omp parallel
-    // cout << "b=A*x: "<<num_thread<<" threads"<<endl;
     omp_set_num_threads(num_thread);
     #pragma omp parallel for shared(b,x,modelnum)
     for (int i = 0; i < modelnum; i++)
@@ -911,20 +868,15 @@ void UWC_Gij(double* b,double** G,double* x, int modelnum,int num_thread)
         {
             b[i] += G[i][j]*x[j];
         }
-        //output progress
-        // #pragma omp critical
-        // bar0.Update();
     }
-    // cout<<"\n";
 }
-//计算: b=Gji*x, 相当于计算向上延托: 平面对平面的情况，只用到了kernel的第一行
+
 void UWC_Gji(double* b, double* G,double* x, GrdHead grdhead, int num_thread)
 {
     int modelnum = grdhead.rows*grdhead.cols;
-    //计算Gm
-    // cout << "b=AT*x: "<<num_thread<<" threads"<<endl;
+
     omp_set_num_threads(num_thread);
-    #pragma omp parallel for 				//加入openMP比原来快四倍
+    #pragma omp parallel for 				
     for (int i = 0; i < modelnum; i++)
     {
         b[i] = 0;
@@ -934,14 +886,13 @@ void UWC_Gji(double* b, double* G,double* x, GrdHead grdhead, int num_thread)
         }
     }
 }
-//计算：b=Gij*x, 相当于计算向上延托: 平面对平面的情况，只用到了kernel的第一行
+
 void UWC_Gij(double* b, double* G,double* x, GrdHead grdhead, int num_thread)
 {
     int modelnum = grdhead.rows*grdhead.cols;
-    //计算Gm
-    // cout << "b=A*x: "<<num_thread<<" threads"<<endl;
+
     omp_set_num_threads(num_thread);
-    #pragma omp parallel for 				//加入openMP比原来快四倍
+    #pragma omp parallel for 				
     for (int i = 0; i < modelnum; i++)
     {
         b[i] = 0;
@@ -954,10 +905,8 @@ void UWC_Gij(double* b, double* G,double* x, GrdHead grdhead, int num_thread)
 void UWC(double* datain, double* dataout, GrdHead grdhead,double** G)
 {
     int modelnum = grdhead.rows*grdhead.cols;
-    //计算Gm
-    // cout << "*  - UWC progress"<<endl;
-    // ProgressBar bar0(modelnum,34);//适用蓝色进度条表示区别
-    #pragma omp parallel for 				//加入openMP比原来快四倍
+
+    #pragma omp parallel for 				
     for (int i = 0; i < modelnum; i++)
     {
         dataout[i] = 0;
@@ -965,10 +914,9 @@ void UWC(double* datain, double* dataout, GrdHead grdhead,double** G)
         {
             dataout[i] += G[i][j]*datain[j];
         }
-        // #pragma omp critical
-        // bar0.Update();
+
     }
-    // cout << "\n";
+
 }
 /*===============================================================================
  Downward continuation: uneven surface to plane(frequency domain)
@@ -976,9 +924,9 @@ void UWC(double* datain, double* dataout, GrdHead grdhead,double** G)
  void DWC_p2p_f(string inputfilename,string outputfilename,double height1,double height2,
 int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
  {
-    // double TRP = 0.01;
+
     int kmax = 500;
-    const double daierta = 0.00001;										//迭代终止条件
+    const double daierta = 0.00001;										//Iterative termination condition
     
     //1. read grd data
     GrdHead grdhead;
@@ -993,111 +941,68 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
     cout << "*****************************************************\n";
     cout << "       Downward continuation from plane to plane(frequency)     \n";
-    cout <<"        数据量: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
-    cout <<"        核矩阵大小: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
-    cout <<"        约占内存: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
-    cout <<"        向下延拓  ";
-    cout <<"\033[31m";       //开启红色
+    cout <<"        Data: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
+    cout <<"        Size of kernel matrix: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
+    cout <<"        Memory: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
+    cout <<"        Downward continuation  ";
+    cout <<"\033[31m";       //red
     cout <<(rph/dx);
     cout <<"\033[0m";
-    cout <<"  个点距\n";
+    cout <<"  point spacing\n";
     cout << "*****************************************************\n";
     
-    //3. kernel mat.
-    // cout<<"Generate kernal matrix"<<endl;
-    // double** GG=new double*[modelnum];
-    // for(int i=0; i<modelnum; i++)
-    // {
-    //     GG[i]=new double[modelnum];
-    // }
     
-    // if(useOldKernel)
-    // {
-    //     Getkernel_p2p(grdhead,rph,GG,num_thread);
-    // }else
-    // {
-    //     Getkernel_p2p_new(grdhead,rph,GG,num_thread);
-    //     // Getkernel_p2p(grdhead,rph,GG,num_thread);
-    // }
-    double* G = new double[modelnum];					//核矩阵第一行
+    double* G = new double[modelnum];	
 
-    //1.3 获取核矩阵第一行
+    //get the first row of the matrix
     GetKernalMatrix_new(grdhead, G, rph);
-    // cout<<"Kernal matrix generated ...\n";
-    // for(int i=0; i<modelnum; i++)
-    // {
-    //     for(int j=0;j<modelnum;j++)
-    //     {
-    //         double gij=GetGij(i,j,G,grdhead);
-    //         // cout<<GG[i][j]<<"\t"<<gij<<"\t"<<GG[i][j]-gij<<endl;
-    //         if((GG[i][j]-gij)>1E-10)
-    //         {
-    //             cout<<i<<"\t"<<j<<endl;
-    //             return ;
-    //         }
-    //     }
-        
-    // }
-    // return;
-    // int i=1,j=182;
-    // double gij=GetGij(i,j,G,grdhead);
-    // cout<<GG[i][j]<<"\t"<<gij<<"\t"<<GG[i][j]-gij<<"\t"<<GG[i][j]-GG[0][j+1]<<endl;
-    // // i=181,j=91;
-    // // gij=GetGij(i,j,G,grdhead);
-    // // cout<<GG[i][j]<<"\t"<<gij<<"\t"<<GG[i][j]-gij<<endl;
-    // return;
-    //4. outdata
+    // outdata
     double *dataout=new double[modelnum];
    
-    //1.2 变量申请
     double* gk = new double[modelnum], *dk = new double[modelnum], *yk1 = new double[modelnum], *sk1 = new double[modelnum];//yk1表示yk-1
     double* Adk = new double[modelnum], *gk1 = new double[modelnum], *mk1 = new double[modelnum];//gk1表示gk-1
     double* B = new double[modelnum], *ATAdk = new double[modelnum];
     double thetak, betak1, aerfak;
-    //----加入正则化,右边向量变为ATd
-    // UWC_Gij(indata, B, grdhead,G);
     UWC_p2p_f(indata,B,grdhead,rph);
-    //1.4 初始化,初始模型为0
+
     for (int i = 0; i<modelnum; i++)
     {
-        mk1[i] = 0;								 //初始模型mk-1取为0
-        gk1[i] = -B[i];						//gk-1
-        dk[i] = -gk1[i];							//dk
+        mk1[i] = 0;								 
+        gk1[i] = -B[i];						
+        dk[i] = -gk1[i];			
     }
-    //====================计算Adk============================================================================
-    // UWC_Gij(dk, Adk, grdhead, G);
-    // UWC_Gij(Adk, ATAdk,grdhead, G);
+    //====================calculate Adk=============
     UWC_p2p_f(dk, Adk, grdhead,rph);
     UWC_p2p_f(Adk, ATAdk,grdhead,rph);
     for (int i = 0; i < modelnum; i++)
     {
-        ATAdk[i] += TRP*dk[i];													//由于把(AT*A+miu*I)dk分开算了，故最后ATADK加上正则化参数乘以dk
+        ATAdk[i] += TRP*dk[i];													
     }
-    //=======================================================================================================
+    //=========================================
     double fenzi = 0, fenmu = 0;
     for (int i = 0; i<modelnum; i++)
     {
         fenzi += gk1[i] * dk[i];
         fenmu += dk[i] * ATAdk[i];
     }
-    aerfak = -fenzi / fenmu;//printf("aerfa0  %lf\n",aerfak);						//计算aerfa0
-    //计算第1次解
+    aerfak = -fenzi / fenmu;
+
     for (int i = 0; i<modelnum; i++)
     {
         dataout[i] = mk1[i] + aerfak*dk[i];
         gk[i] = gk1[i] + aerfak*ATAdk[i];
     }
-    //1.5 循环迭代
+    //1.5 loop and iteration
     double* error_vector = new double[kmax];
     for (int k = 0; k<kmax; k++)
     {
-        //1.1 计算yk-1,sk-1
+        //1.1 yk-1,sk-1
         for (int i = 0; i<modelnum; i++)
         {
             yk1[i] = gk[i] - gk1[i];
             sk1[i] = dataout[i] - mk1[i];
         }
-        //1.2 计算thetak
+        //1.2 thetak
         double fenzi = 0, fenmu = 0, fenzi2 = 0, fenmu2 = 0;
         for (int i = 0; i<modelnum; i++)
         {
@@ -1106,12 +1011,12 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
             fenmu += gk[i] * yk1[i];
             fenmu2 += sk1[i] * yk1[i];
         }
-        thetak = 1.0 - fenzi*fenzi2 / (fenmu2*fenmu);//printf("thetak %.20f\t",thetak);
+        thetak = 1.0 - fenzi*fenzi2 / (fenmu2*fenmu);
         if (thetak <= 0.25)
         {
             thetak = 1;
         }
-        //1.3 计算betak-1
+        //1.3 betak-1
         double fenzi3 = 0;
         fenzi = 0, fenmu = 0; fenzi2 = 0; fenmu2 = 0;
         for (int i = 0; i<modelnum; i++)
@@ -1124,15 +1029,12 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
             fenmu2 += sk1[i] * yk1[i];
         }
         betak1 = fenzi / fenmu - fenzi2*fenzi3 / pow(fenmu2, 2.0);//printf("betak-1 %lf\t",betak1);
-        //1.4 计算dk
+        //1.4 dk
         for (int i = 0; i<modelnum; i++)
         {
             dk[i] = -thetak*gk[i] + betak1*sk1[i];
         }
-        //1.5 计算迭代步长aerfak(这里先用精确线搜索，本来要用强Wolfe线搜索的)
-        //====================计算Adk===========================================
-        // UWC_Gij(dk, Adk, grdhead, G);
-        // UWC_Gij(Adk, ATAdk,grdhead, G);
+
         UWC_p2p_f(dk, Adk, grdhead,rph);
         UWC_p2p_f(Adk, ATAdk,grdhead,rph);
         for (int i = 0; i < modelnum; i++)
@@ -1148,7 +1050,7 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
             fenmu += dk[i] * ATAdk[i];
         }
         aerfak = -fenzi / fenmu;
-        //1.6 计算mk+1
+        //1.6 mk+1
         for (int i = 0; i<modelnum; i++)											//把mk给mk-1,gk给gk-1
         {
             mk1[i] = dataout[i];
@@ -1158,15 +1060,15 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
         {
             dataout[i] = mk1[i] + aerfak*dk[i];
         }
-        //1.7 计算gk
+        //1.7 gk
         double error_MHS = 0;
         for (int i = 0; i<modelnum; i++)
         {
             gk[i] = gk1[i] + aerfak*ATAdk[i];
             error_MHS += pow(gk[i], 2.0);
         }
-        printf("第%d次  ,收敛条件:", k);
-        cout<<"\033[32m";       //开启绿色
+        printf("The %dth iteration  ,error:", k);
+        cout<<"\033[32m"; 
         printf("%lf\t", error_MHS);
         cout<<"\033[0m";
         printf("%lf\t%lf\n", aerfak, thetak);
@@ -1191,11 +1093,6 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
     delete[] indata;
     delete[] dataout;
     delete[] G;
-    //delete kernal matrix
-    // for (int i = 0; i < modelnum; i++)
-    // {
-    //     delete[] G[i];
-    // }delete[] G;
  }
  /*===============================================================================
  Downward continuation: uneven surface to plane(space domain)
@@ -1209,9 +1106,8 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     cout << "***************************************************\n";
     // double TRP = 0.01;
     int kmax = 500;
-    const double daierta = 0.00001;										//迭代终止条件
-    cout<<"最大迭代次数："<<kmax<<", 迭代终止条件: "<<daierta<<endl;
-    // cout<<"正则化参数: "<<TRP<<endl;
+    const double daierta = 0.00001;										//Iterative termination condition
+    cout<<"The maximum iteration number: "<<kmax<<", Iterative termination condition: "<<daierta<<endl;
     //1. read grd data
     GrdHead grdhead;
     double* indata = NULL;
@@ -1233,19 +1129,17 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
         exit(0);
     }
     //2. height of continuation
-    // double rph=fabs(height1-height2);
-    //print general information
     double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
     // cout << "*****************************************************\n";
     // cout << "       Downward continuation from plane to plane(space)     \n";
-    cout <<"数据量: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
-    cout <<"核矩阵大小: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
-    cout <<"核矩阵约占内存: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,2)/pow(1024.0,2)<< "Mb"<<endl;
-    cout<<"点距 dx: "<<dx<<"  dy: "<<dy<<endl;
-    cout <<"向下延拓: ";
-    cout<<"最大"<<"\033[31m"<<((grdhead_topo.bounds[5]-height2)/dx)<<"\033[0m"<<" 个点距";
-    cout<<", 最小"<<"\033[31m"<<((grdhead_topo.bounds[4]-height2)/dx)<<"\033[0m"<<" 个点距"<<endl;
+    cout <<"Data size: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
+    cout <<"Size of kernel mat.: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
+    cout <<"Memory of kernel mat.: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,2)/pow(1024.0,2)<< "Mb"<<endl;
+    cout<<"Point spacing dx: "<<dx<<"  dy: "<<dy<<endl;
+    cout <<"Downward continue: ";
+    cout<<""<<"\033[31m"<<((grdhead_topo.bounds[5]-height2)/dx)<<"\033[0m"<<" point spacing";
+    cout<<"to "<<"\033[31m"<<((grdhead_topo.bounds[4]-height2)/dx)<<"\033[0m"<<" point spacing"<<endl;
     cout << "*****************************************************\n";
     
     //3. kernel mat.
@@ -1257,16 +1151,15 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     cout<<"calculating kernal matrix"<<endl;
     if(useOldKernel)
     {
-        cout<<"Old kernel p2s is not added now"<<endl;
+        cout<<"Old kernel p2s is depressed"<<endl;
         exit(0);
-        // Getkernel_p2s(grdhead,rph,G,num_thread);
     }else
     {
         Getkernel_p2s_new(grdhead,height2,topo,G,num_thread);
     }
     //4. outdata
     double *dataout=new double[modelnum];
-    //调用下延子程序
+    //call downward continuation subfunction
     switch(DWC_method)
     {
         case DWC_CGLS:
@@ -1279,20 +1172,17 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
             DWC_s2p_LandweberIter(G,dataout,indata,grdhead,extNum,num_thread,outputfilename,DWC_parameter,exactsolution);
             break;
         case DWC_TIKHONOV:
-            cout<<RED<<"现在的Tikhonov方法还不完善"<<COLOR_DEFALUT<<endl;
+            cout<<RED<<"The Tikhonov method is not implemented yet "<<COLOR_DEFALUT<<endl;
             // DWC_s2p_Tikhonov(G,dataout,indata,grdhead,extNum,DWC_parameter,num_thread);
             break;
         default:
-            cout<<RED<<"给定的向下延拓方法还不存在"<<COLOR_DEFALUT<<endl;
+            cout<<RED<<"The method of downward continuation is not available yet."<<COLOR_DEFALUT<<endl;
             exit(0);
     }
-    
-    // 
-    // 
+
     //4. write result
     if (!SaveGrd(outputfilename, grdhead, dataout,extNum,true))return ;
-    //5. compute error if exact solution is given
-    //5. compute error if exact solution is given
+
     if(filename_exact!="")
     {
         cout<<"calculate error according to exact solution file"<<endl;
@@ -1313,7 +1203,7 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
         delete[] G[i];
     }delete[] G;
 }
-//积分迭代法求解曲面到平面的向下延拓
+
 void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     GrdHead grdhead,int extNum,int num_thread,string outputfile,double iter_number,
     double* ExactSolution)
@@ -1328,7 +1218,7 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     for(int i=0;i<modelnum;i++)residual[i]=0;
     double* x_uwc=new double[modelnum];
     double* tempArray=new double[modelnum];
-    //保存中间结果
+
     string path_tempResult=Path_GetFileName(outputfile)+"_Integral";
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
@@ -1341,7 +1231,7 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
     }
-    //保存迭代过程的各种误差
+
     string filename_log=path_tempResult+"/IntegralInteration_log.txt";
     ofstream fout_log(filename_log);
     if(!fout_log)
@@ -1383,9 +1273,7 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
         
         //5. write temporary result
         if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-        // SaveGrd2VTK(path_tempResult+std::to_string(k)+".grd",grdhead,x) ;
-        //save residual and iteration to log file
-        // fpu_fop<<k<<"\t"<<
+
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1396,7 +1284,7 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     delete[] x_uwc;
     delete[] tempArray;
 }
-//CGLS:最小二乘共轭梯度法求解平面对平面的向下延拓
+//CGLS
 //P. C. Hansen, Deconvolution and regularization with Toeplitz matrices, 2002, 323-378
 //iteration form: 
 void DWC_p2p_CGLS(double* G_firstRow,double* x, double* b,GrdHead grdhead,int extNum,
@@ -1482,7 +1370,7 @@ double delta,int num_thread)
     //delete
     delete[] rk1,dk1,xk1,rk,dk,temp_Ab;
 }
-//CGLS:最小二乘共轭梯度法求解曲面对平面的向下延拓
+//CGLS:
 //P. C. Hansen, Deconvolution and regularization with Toeplitz matrices, 2002, 323-378
 //iteration form: 
 void DWC_s2p_CGLS(double** G,double* x, double* b,GrdHead grdhead,int extNum,double delta,int num_thread)
@@ -1604,8 +1492,7 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
         xk1[i]=0;
         rk1[i]=b[i];//r0=b-A*x0, but x0=0,so r0=b
     }
-    // UWC_Gij(dk1,G,rk1,modelnum,num_thread);//d0=AT * r0
-    UWC_G_CGLS_Tik(dk1,G,rk1,modelnum,lambda2,num_thread);//d0=(GT*G + lambda*I) * r0
+    UWC_G_CGLS_Tik(dk1,G,rk1,modelnum,lambda2,num_thread);
     //iteration
     vector<double>bar_left;bar_left.push_back(0);bar_left.push_back(log10(1E6));
     vector<double>bar_right;bar_right.push_back(double(kmax));bar_right.push_back(log10(delta));
@@ -1675,15 +1562,13 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
     cout << "***************************************************\n";
     // double TRP = 0.01;
     int kmax = 500;
-    // double daierta = 0.00001;										//迭代终止条件
-    // cout<<"最大迭代次数："<<kmax<<", 迭代终止条件: "<<daierta<<endl;
-    // cout<<"正则化参数: "<<TRP<<endl;
+
     //1. read grd data
     GrdHead grdhead;
     double* indata = NULL;
     if (!(indata = ReadGrd(inputfilename, grdhead,extNum)))return ;
     int modelnum = grdhead.rows*grdhead.cols;
-    //是否给了真是解的文件
+
     double* exactsolution = NULL;
     if(filename_exact!="")
     {
@@ -1697,31 +1582,27 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
     double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
     // cout << "*****************************************************\n";
     // cout << "       Downward continuation from plane to plane(space)     \n";
-    cout<<num_thread<<" 个线程参与计算"<<endl;
-    cout <<"数据量: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
-    cout <<"核矩阵大小: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
-    cout <<"只保存第一行，约占内存: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
-    cout <<"向下延拓：  ";
-    cout <<"\033[31m";       //开启红色
+    cout<<num_thread<<" threads"<<endl;
+    cout <<"Size of data: "<<grdhead.rows<<" X "<<grdhead.cols<<endl;
+    cout <<"Size of kernel mat.: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
+    cout <<"Only save the first row of kernel mat: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
+    cout <<"Downward continuation:  ";
+    cout <<"\033[31m";       
     cout <<(rph/dx);
     cout <<"\033[0m";
-    cout <<"  个点距\n";
+    cout <<"  point spacing\n";
     cout << "*****************************************************\n";
 
-    // double* G_firstRow = new double[modelnum];					//核矩阵第一行
     double** G=new double*[modelnum];
     for(int i=0; i<modelnum; i++)
     {
         G[i]=new double[modelnum];
     }
-    //1.3 获取核矩阵第一行
-    // GetKernalMatrix_new(grdhead, G, rph);
+
     Getkernel_p2p_new(grdhead,rph,G,num_thread);
     //4. outdata
     double *dataout=new double[modelnum];
-    //调用下延子程序
-    // DWC_Tikhonov_old(G_firstRow,dataout,indata,TRP,kmax,daierta,grdhead,num_thread);
-    // DWC_p2p_CGLS(G_firstRow,dataout,indata,grdhead,DWC_parameter,num_thread);
+    
     switch(DWC_method)
     {
         case DWC_CGLS:
@@ -1739,11 +1620,11 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
             break;
         case DWC_TIKHONOV:
             // DWC_s2p_Tikhonov(G,dataout,indata,grdhead,DWC_parameter,num_thread);
-            cout<<RED<<"暂不支持平面到平面向下延拓的tikhonov正则化方法"<<endl;
+            cout<<RED<<"The Tikhonov method of downward continuation is not implemented yet"<<endl;
             exit(0);
             break;
         default:
-            cout<<RED<<"给定的向下延拓方法还不存在"<<COLOR_DEFALUT<<endl;
+            cout<<RED<<"The downward continuation method is not available yet"<<COLOR_DEFALUT<<endl;
             exit(0);
     }
     //5. write result
@@ -1779,7 +1660,7 @@ void DWC_p2p_ItegrationIter(double* G,double* x, double* b,
     for(int i=0;i<modelnum;i++)residual[i]=0;
     double* x_uwc=new double[modelnum];
     double* tempArray=new double[modelnum];
-    //保存中间结果
+
     string path_tempResult=Path_GetFileName(outputfile)+"_Integral";
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
@@ -1832,9 +1713,7 @@ void DWC_p2p_ItegrationIter(double* G,double* x, double* b,
         }
         //5. write temporary result
         if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-        // SaveGrd2VTK(path_tempResult+"/IntegralInteration_"+std::to_string(k)+".vtk",grdhead,x) ;
-        //save residual and iteration to log file
-        // fpu_fop<<k<<"\t"<<
+
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1859,7 +1738,7 @@ void DWC_p2p_LandweberIter(double* G,double* x, double* b,
     for(int i=0;i<modelnum;i++)residual[i]=0;
     double* x_uwc=new double[modelnum];
     double* tempArray=new double[modelnum];
-    //保存中间结果
+
     string path_tempResult=Path_GetFileName(outputfile)+"_Landweber";
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
@@ -1914,9 +1793,7 @@ void DWC_p2p_LandweberIter(double* G,double* x, double* b,
         }
         //5. write temporary result
         if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-        // SaveGrd2VTK(path_tempResult+"/IntegralInteration_"+std::to_string(k)+".vtk",grdhead,x) ;
-        //save residual and iteration to log file
-        // fpu_fop<<k<<"\t"<<
+
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1941,7 +1818,7 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     for(int i=0;i<modelnum;i++)residual[i]=0;
     double* x_uwc=new double[modelnum];
     double* tempArray=new double[modelnum];
-    //保存中间结果
+
     string path_tempResult=Path_GetFileName(outputfile)+"_Landweber";
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
@@ -1954,7 +1831,7 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
     }
-    //保存迭代过程的各种误差
+
     string filename_log=path_tempResult+"/LandweberIteration_log.txt";
     ofstream fout_log(filename_log);
     if(!fout_log)
@@ -1969,7 +1846,6 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     else{
         fout_log<<"Iter\tNorm2(Ax-b)/Norm2(b)\tNorm2(x)\tNorm2(grad_x)"<<endl;
     }
-    //iteration
     //iteration
     vector<double>bar_left;bar_left.push_back(0);bar_left.push_back(0);
     vector<double>bar_right;bar_right.push_back(double(kmax));bar_right.push_back(log10(REmin));
@@ -1999,9 +1875,7 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
         
         //5. write temporary result
         if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-        // SaveGrd2VTK(path_tempResult+std::to_string(k)+".grd",grdhead,x) ;
-        //save residual and iteration to log file
-        // fpu_fop<<k<<"\t"<<
+
         if(RE<REmin)break;
         //update progressbar
         bar_pos[0]=k+1;
@@ -2016,55 +1890,50 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
  void DWC_Tikhonov_old(double* G_firstRow,double* dataout,double* indata,double TRP,int kmax,double daierta,GrdHead grdhead,int num_thread)
  {
      int modelnum=grdhead.rows*grdhead.cols;
-    //1.2 变量申请
+
     double* gk = new double[modelnum], *dk = new double[modelnum], *yk1 = new double[modelnum], *sk1 = new double[modelnum];//yk1表示yk-1
     double* Adk = new double[modelnum], *gk1 = new double[modelnum], *mk1 = new double[modelnum];//gk1表示gk-1
     double* B = new double[modelnum], *ATAdk = new double[modelnum];
     double thetak, betak1, aerfak;
-    //----加入正则化,右边向量变为ATd
+
     UWC_Gij(B, G_firstRow, indata,grdhead,num_thread);
-    // UWC_p2p_f(indata,B,grdhead,rph);
-    //1.4 初始化,初始模型为0
+
     for (int i = 0; i<modelnum; i++)
     {
-        mk1[i] = 0;								 //初始模型mk-1取为0
-        gk1[i] = -B[i];						//gk-1
-        dk[i] = -gk1[i];							//dk
+        mk1[i] = 0;								 
+        gk1[i] = -B[i];						
+        dk[i] = -gk1[i];							
     }
-    //====================计算Adk============================================================================
     UWC_Gij(Adk, G_firstRow,dk, grdhead, num_thread);
     UWC_Gij(ATAdk,G_firstRow,Adk, grdhead,num_thread);
-    // UWC_p2p_f(dk, Adk, grdhead,rph);
-    // UWC_p2p_f(Adk, ATAdk,grdhead,rph);
+
     for (int i = 0; i < modelnum; i++)
     {
-        ATAdk[i] += TRP*dk[i];													//由于把(AT*A+miu*I)dk分开算了，故最后ATADK加上正则化参数乘以dk
+        ATAdk[i] += TRP*dk[i];													
     }
-    //=======================================================================================================
+    //==========================================
     double fenzi = 0, fenmu = 0;
     for (int i = 0; i<modelnum; i++)
     {
         fenzi += gk1[i] * dk[i];
         fenmu += dk[i] * ATAdk[i];
     }
-    aerfak = -fenzi / fenmu;//printf("aerfa0  %lf\n",aerfak);						//计算aerfa0
-    //计算第1次解
+    aerfak = -fenzi / fenmu;
+
     for (int i = 0; i<modelnum; i++)
     {
         dataout[i] = mk1[i] + aerfak*dk[i];
         gk[i] = gk1[i] + aerfak*ATAdk[i];
     }
-    //1.5 循环迭代
+
     double* error_vector = new double[kmax];
     for (int k = 0; k<kmax; k++)
     {
-        //1.1 计算yk-1,sk-1
         for (int i = 0; i<modelnum; i++)
         {
             yk1[i] = gk[i] - gk1[i];
             sk1[i] = dataout[i] - mk1[i];
         }
-        //1.2 计算thetak
         double fenzi = 0, fenmu = 0, fenzi2 = 0, fenmu2 = 0;
         for (int i = 0; i<modelnum; i++)
         {
@@ -2073,12 +1942,11 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
             fenmu += gk[i] * yk1[i];
             fenmu2 += sk1[i] * yk1[i];
         }
-        thetak = 1.0 - fenzi*fenzi2 / (fenmu2*fenmu);//printf("thetak %.20f\t",thetak);
+        thetak = 1.0 - fenzi*fenzi2 / (fenmu2*fenmu);
         if (thetak <= 0.25)
         {
             thetak = 1;
         }
-        //1.3 计算betak-1
         double fenzi3 = 0;
         fenzi = 0, fenmu = 0; fenzi2 = 0; fenmu2 = 0;
         for (int i = 0; i<modelnum; i++)
@@ -2091,22 +1959,18 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
             fenmu2 += sk1[i] * yk1[i];
         }
         betak1 = fenzi / fenmu - fenzi2*fenzi3 / pow(fenmu2, 2.0);//printf("betak-1 %lf\t",betak1);
-        //1.4 计算dk
         for (int i = 0; i<modelnum; i++)
         {
             dk[i] = -thetak*gk[i] + betak1*sk1[i];
         }
-        //1.5 计算迭代步长aerfak(这里先用精确线搜索，本来要用强Wolfe线搜索的)
-        //====================计算Adk===========================================
+
         UWC_Gij(Adk, G_firstRow,dk,  grdhead,num_thread);
         UWC_Gij(ATAdk,G_firstRow,Adk,  grdhead,num_thread);
-        // UWC_p2p_f(dk, Adk, grdhead,rph);
-        // UWC_p2p_f(Adk, ATAdk,grdhead,rph);
+
         for (int i = 0; i < modelnum; i++)
         {
             ATAdk[i] += TRP*dk[i];
         }
-        //==============================================================
         
         fenzi = 0; fenmu = 0;
         for (int i = 0; i<modelnum; i++)
@@ -2115,8 +1979,8 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
             fenmu += dk[i] * ATAdk[i];
         }
         aerfak = -fenzi / fenmu;
-        //1.6 计算mk+1
-        for (int i = 0; i<modelnum; i++)											//把mk给mk-1,gk给gk-1
+
+        for (int i = 0; i<modelnum; i++)		
         {
             mk1[i] = dataout[i];
             gk1[i] = gk[i];
@@ -2125,15 +1989,15 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
         {
             dataout[i] = mk1[i] + aerfak*dk[i];
         }
-        //1.7 计算gk
+
         double error_MHS = 0;
         for (int i = 0; i<modelnum; i++)
         {
             gk[i] = gk1[i] + aerfak*ATAdk[i];
             error_MHS += pow(gk[i], 2.0);
         }
-        printf("第%d次  ,收敛条件:", k);
-        cout<<"\033[32m";       //开启绿色
+        printf("The %dth iteration  ,error:", k);
+        cout<<"\033[32m";    
         printf("%lf\t", error_MHS);
         cout<<"\033[0m";
         printf("%lf\t%lf\n", aerfak, thetak);
@@ -2154,14 +2018,7 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     delete[] mk1;
     delete[] B;
     delete[] ATAdk;
-    // delete[] indata;
-    // delete[] dataout;
-    // delete[] G_firstRow;
-    //delete kernal matrix
-    // for (int i = 0; i < modelnum; i++)
-    // {
-    //     delete[] G[i];
-    // }delete[] G;
+
  }
 
  double Norm2(double* x,const int num)
@@ -2175,16 +2032,6 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
  }
  double Norm2_Gradient(double* result,GrdHead grdhead)
  {
-    // double modelnum=grdhead.rows*grdhead.cols;
-    // double** fx=new double* [grdhead.rows];
-    // double** fy=new double* [grdhead.rows];
-    // // double** data=new double* [grdhead.rows];
-    // for(int i=0;i<grdhead.rows;i++)
-    // {
-    //     fx[i]=new double[grdhead.cols];
-    //     fy[i]=new double[grdhead.cols];
-    //     // data[i]=new double[grdhead.cols];
-    // }
     double fx=0,fy=0,sum=0;
     //compute fx
     int index_ij=0;
@@ -2198,14 +2045,6 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
             sum=fx*fx+fy*fy;
         }
     }
-
-    // for(int i=0;i<grdhead.rows;i++)
-    // {
-    //     delete[] fx[i];
-    //     delete[] fy[i];
-    // }
-    // delete[] fx;
-    // delete[] fy;
 
     return sqrt(sum);
  }
