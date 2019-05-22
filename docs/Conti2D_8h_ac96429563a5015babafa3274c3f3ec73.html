@@ -14,7 +14,7 @@
     extensions: ["tex2jax.js"],
     jax: ["input/TeX","output/HTML-CSS"],
 });
-</script><script type="text/javascript" async src="/opt/MathJax/MathJax.js"></script>
+</script><script type="text/javascript" async src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -211,22 +211,38 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Conti2D_8cpp_source.html#l01203">1203</a> of file <a class="el" href="Conti2D_8cpp_source.html">Conti2D.cpp</a>.</p>
+<p>downward continuation from surface to plane </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputfilename</td><td></td></tr>
+    <tr><td class="paramname">outputfilename</td><td></td></tr>
+    <tr><td class="paramname">topo1</td><td></td></tr>
+    <tr><td class="paramname">height2</td><td></td></tr>
+    <tr><td class="paramname">extNum</td><td></td></tr>
+    <tr><td class="paramname">DWC_parameter</td><td></td></tr>
+    <tr><td class="paramname">DWC_method</td><td></td></tr>
+    <tr><td class="paramname">num_thread</td><td></td></tr>
+    <tr><td class="paramname">isProgress</td><td></td></tr>
+    <tr><td class="paramname">useOldKernel</td><td></td></tr>
+    <tr><td class="paramname">filename_exact</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="Conti2D_8h_source.html#l00069">GrdHead::bounds</a>, <a class="el" href="Conti2D_8h_source.html#l00036">COLOR_DEFALUT</a>, <a class="el" href="Conti2D_8h_source.html#l00068">GrdHead::cols</a>, <a class="el" href="Conti2D_8h_source.html#l00023">DWC_CGLS</a>, <a class="el" href="Conti2D_8h_source.html#l00025">DWC_INTEGRALITERATION</a>, <a class="el" href="Conti2D_8h_source.html#l00026">DWC_LANDWEBER</a>, <a class="el" href="Conti2D_8cpp_source.html#l01488">DWC_s2p_CGLS()</a>, <a class="el" href="Conti2D_8cpp_source.html#l01317">DWC_s2p_ItegrationIter()</a>, <a class="el" href="Conti2D_8cpp_source.html#l01930">DWC_s2p_LandweberIter()</a>, <a class="el" href="Conti2D_8h_source.html#l00024">DWC_TIKHONOV</a>, <a class="el" href="Conti2D_8cpp_source.html#l00237">Getkernel_p2s_new()</a>, <a class="el" href="Conti2D_8cpp_source.html#l00721">ReadGrd()</a>, <a class="el" href="Conti2D_8h_source.html#l00032">RED</a>, <a class="el" href="Conti2D_8h_source.html#l00068">GrdHead::rows</a>, and <a class="el" href="Conti2D_8cpp_source.html#l00808">SaveGrd()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Conti2D_8cpp_source.html#l01100">1100</a> of file <a class="el" href="Conti2D_8cpp_source.html">Conti2D.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="Conti2D_8h_source.html#l00069">GrdHead::bounds</a>, <a class="el" href="Conti2D_8h_source.html#l00036">COLOR_DEFALUT</a>, <a class="el" href="Conti2D_8h_source.html#l00068">GrdHead::cols</a>, <a class="el" href="Conti2D_8h_source.html#l00023">DWC_CGLS</a>, <a class="el" href="Conti2D_8h_source.html#l00025">DWC_INTEGRALITERATION</a>, <a class="el" href="Conti2D_8h_source.html#l00026">DWC_LANDWEBER</a>, <a class="el" href="Conti2D_8cpp_source.html#l01376">DWC_s2p_CGLS()</a>, <a class="el" href="Conti2D_8cpp_source.html#l01207">DWC_s2p_ItegrationIter()</a>, <a class="el" href="Conti2D_8cpp_source.html#l01807">DWC_s2p_LandweberIter()</a>, <a class="el" href="Conti2D_8h_source.html#l00024">DWC_TIKHONOV</a>, <a class="el" href="Conti2D_8cpp_source.html#l00237">Getkernel_p2s_new()</a>, <a class="el" href="Conti2D_8cpp_source.html#l00688">ReadGrd()</a>, <a class="el" href="Conti2D_8h_source.html#l00032">RED</a>, <a class="el" href="Conti2D_8h_source.html#l00068">GrdHead::rows</a>, and <a class="el" href="Conti2D_8cpp_source.html#l00774">SaveGrd()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00016">main()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73_ac96429563a5015babafa3274c3f3ec73_cgraph.svg" width="538" height="382"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
-</div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73_ac96429563a5015babafa3274c3f3ec73_cgraph.svg" width="538" height="382"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73_ac96429563a5015babafa3274c3f3ec73_icgraph.svg" width="191" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
-</div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73_ac96429563a5015babafa3274c3f3ec73_icgraph.svg" width="191" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -237,7 +253,7 @@ Here is the caller graph for this function:</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 22 2019 19:29:13 for Conti2D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 22 2019 20:39:14 for Conti2D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

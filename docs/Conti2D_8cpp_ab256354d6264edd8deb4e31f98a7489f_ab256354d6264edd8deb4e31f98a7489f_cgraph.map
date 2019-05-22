@@ -9,7 +9,7 @@
 <area shape="rect" id="node5" href="$classMultiProgressBar_a58eef55ad6d5c7d769b3a402a2ef7b85.html#a58eef55ad6d5c7d769b3a402a2ef7b85" title="MultiProgressBar::Update" alt="" coords="358,104,532,129"/>
 <area shape="rect" id="node6" href="$Conti2D_8cpp_a632c1e4efbb7e9b1aaf04db729e69394.html#a632c1e4efbb7e9b1aaf04db729e69394" title="UWC_Gij" alt="" coords="407,252,484,277"/>
 <area shape="rect" id="node7" href="$Conti2D_8cpp_a9d30373a0ff29e4f743eaf5e4cbc3cbf.html#a9d30373a0ff29e4f743eaf5e4cbc3cbf" title="UWC_Gji" alt="" coords="407,55,484,80"/>
-<area shape="rect" id="node9" href="$Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" title="Norm2_Gradient" alt="" coords="385,301,505,327"/>
-<area shape="rect" id="node10" href="$Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" title="Path_GetFileName" alt="" coords="378,351,513,376"/>
+<area shape="rect" id="node9" href="$Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" title="Get 2nd norm of the gradient of a grid data. " alt="" coords="385,301,505,327"/>
+<area shape="rect" id="node10" href="$Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" title="Get file name from a full path. " alt="" coords="378,351,513,376"/>
 <area shape="rect" id="node13" href="$Conti2D_8cpp_a4bb34ae88cf16e429505f9eb746384cd.html#a4bb34ae88cf16e429505f9eb746384cd" title="GetPmnij" alt="" coords="407,5,483,31"/>
 </map>

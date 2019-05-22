@@ -63,7 +63,7 @@
 <!-- Node18 -->
 <g id="node19" class="node">
 <title>Node18</title>
-<g id="a_node19"><a xlink:href="Conti2D_8cpp_ab256354d6264edd8deb4e31f98a7489f.html#ab256354d6264edd8deb4e31f98a7489f" target="_top" xlink:title="DWC_s2p">
+<g id="a_node19"><a xlink:href="Conti2D_8cpp_ab256354d6264edd8deb4e31f98a7489f.html#ab256354d6264edd8deb4e31f98a7489f" target="_top" xlink:title="downward continuation from surface to plane ">
 <polygon fill="#ffffff" stroke="#000000" points="92.3979,-677.5 92.3979,-695.5 153.9644,-695.5 153.9644,-677.5 92.3979,-677.5"/>
 <text text-anchor="middle" x="123.1812" y="-683.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">DWC_s2p</text>
 </a>
@@ -183,7 +183,7 @@
 <!-- Node28 -->
 <g id="node29" class="node">
 <title>Node28</title>
-<g id="a_node29"><a xlink:href="Conti2D_8cpp_af8adb87017663774bfd342b39facc828.html#af8adb87017663774bfd342b39facc828" target="_top" xlink:title="UWC_p2s">
+<g id="a_node29"><a xlink:href="Conti2D_8cpp_af8adb87017663774bfd342b39facc828.html#af8adb87017663774bfd342b39facc828" target="_top" xlink:title="Upward continuation from plane to surface. ">
 <polygon fill="#ffffff" stroke="#000000" points="92.3979,-449.5 92.3979,-467.5 153.9644,-467.5 153.9644,-449.5 92.3979,-449.5"/>
 <text text-anchor="middle" x="123.1812" y="-455.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">UWC_p2s</text>
 </a>
@@ -378,7 +378,7 @@
 <!-- Node9 -->
 <g id="node10" class="node">
 <title>Node9</title>
-<g id="a_node10"><a xlink:href="Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" target="_top" xlink:title="Norm2_Gradient">
+<g id="a_node10"><a xlink:href="Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" target="_top" xlink:title="Get 2nd norm of the gradient of a grid data. ">
 <polygon fill="#ffffff" stroke="#000000" points="396.0317,-864.5 396.0317,-882.5 485.9526,-882.5 485.9526,-864.5 396.0317,-864.5"/>
 <text text-anchor="middle" x="440.9922" y="-870.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Norm2_Gradient</text>
 </a>
@@ -393,7 +393,7 @@
 <!-- Node10 -->
 <g id="node11" class="node">
 <title>Node10</title>
-<g id="a_node11"><a xlink:href="Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" target="_top" xlink:title="Path_GetFileName">
+<g id="a_node11"><a xlink:href="Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" target="_top" xlink:title="Get file name from a full path. ">
 <polygon fill="#ffffff" stroke="#000000" points="390.4727,-827.5 390.4727,-845.5 491.5117,-845.5 491.5117,-827.5 390.4727,-827.5"/>
 <text text-anchor="middle" x="440.9922" y="-833.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Path_GetFileName</text>
 </a>

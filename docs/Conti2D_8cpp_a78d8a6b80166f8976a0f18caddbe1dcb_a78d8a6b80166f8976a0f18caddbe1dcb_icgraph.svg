@@ -18,7 +18,7 @@
 <!-- Node4 -->
 <g id="node2" class="node">
 <title>Node4</title>
-<g id="a_node2"><a xlink:href="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73.html#ac96429563a5015babafa3274c3f3ec73" target="_top" xlink:title="DWC_s2p">
+<g id="a_node2"><a xlink:href="Conti2D_8h_ac96429563a5015babafa3274c3f3ec73.html#ac96429563a5015babafa3274c3f3ec73" target="_top" xlink:title="downward continuation from surface to plane ">
 <polygon fill="#ffffff" stroke="#000000" points="140.9453,-37.5 140.9453,-55.5 202.5117,-55.5 202.5117,-37.5 140.9453,-37.5"/>
 <text text-anchor="middle" x="171.7285" y="-43.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">DWC_s2p</text>
 </a>
@@ -33,7 +33,7 @@
 <!-- Node6 -->
 <g id="node4" class="node">
 <title>Node6</title>
-<g id="a_node4"><a xlink:href="Conti2D_8h_af8adb87017663774bfd342b39facc828.html#af8adb87017663774bfd342b39facc828" target="_top" xlink:title="UWC_p2s">
+<g id="a_node4"><a xlink:href="Conti2D_8h_af8adb87017663774bfd342b39facc828.html#af8adb87017663774bfd342b39facc828" target="_top" xlink:title="Upward continuation from plane to surface. ">
 <polygon fill="#ffffff" stroke="#000000" points="140.9453,-.5 140.9453,-18.5 202.5117,-18.5 202.5117,-.5 140.9453,-.5"/>
 <text text-anchor="middle" x="171.7285" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">UWC_p2s</text>
 </a>

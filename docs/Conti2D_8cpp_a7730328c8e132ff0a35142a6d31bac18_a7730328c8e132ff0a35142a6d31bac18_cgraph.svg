@@ -33,7 +33,7 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
-<g id="a_node3"><a xlink:href="Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" target="_top" xlink:title="Norm2_Gradient">
+<g id="a_node3"><a xlink:href="Conti2D_8cpp_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c" target="_top" xlink:title="Get 2nd norm of the gradient of a grid data. ">
 <polygon fill="#ffffff" stroke="#000000" points="187.3442,-148.5 187.3442,-166.5 277.2651,-166.5 277.2651,-148.5 187.3442,-148.5"/>
 <text text-anchor="middle" x="232.3047" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Norm2_Gradient</text>
 </a>
@@ -48,7 +48,7 @@
 <!-- Node3 -->
 <g id="node4" class="node">
 <title>Node3</title>
-<g id="a_node4"><a xlink:href="Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" target="_top" xlink:title="Path_GetFileName">
+<g id="a_node4"><a xlink:href="Conti2D_8cpp_a88f10a86b8808047787d2df5e8cbcb72.html#a88f10a86b8808047787d2df5e8cbcb72" target="_top" xlink:title="Get file name from a full path. ">
 <polygon fill="#ffffff" stroke="#000000" points="181.7852,-111.5 181.7852,-129.5 282.8242,-129.5 282.8242,-111.5 181.7852,-111.5"/>
 <text text-anchor="middle" x="232.3047" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Path_GetFileName</text>
 </a>
