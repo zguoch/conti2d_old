@@ -1,0 +1,6 @@
+*.vtk
+*.grd
+
+*.xyz
+*.dat
+mag_plane_8_dwc_p2p_Landweber/

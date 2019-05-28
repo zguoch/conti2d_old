@@ -97,7 +97,8 @@ bool SaveGrd(string filename, GrdHead grdhead,double* data,int extNum, bool save
  * @param G 
  * @param rph 
  * @param num_thread 
- */
+ */ 
+
 void GetKernalMatrix(GrdHead grdhead, double* G, const double rph, int num_thread=4);
 /**
  * @brief Get the kernel matrix using the new developed formula
@@ -280,7 +281,7 @@ double Norm2_Gradient(double* result,GrdHead grdhead);
  * @return int 
  */
 int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data);
-
+bool SaveGrd2xyz(string filename, GrdHead grdhead, double* data,int extNum,bool isInfo=true);
 static void StartText()
 {
     //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen

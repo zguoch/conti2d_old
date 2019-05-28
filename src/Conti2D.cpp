@@ -362,7 +362,25 @@ void UWC_p2s(string inputfilename,string outputfilename,
     cout << "Finished\n";
     
     //4. write result
-    if (!SaveGrd(outputfilename, grdhead, outdata,extNum,true))return ;
+    // if (!SaveGrd(outputfilename, grdhead, outdata,extNum))return ;
+    string ext_outputfile=Path_GetExtName(outputfilename);
+    if(ext_outputfile=="grd" || ext_outputfile=="GRD")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        if (!SaveGrd(outputfilename, grdhead, outdata,extNum))return ;
+    }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2VTK(outputfilename,grdhead,outdata);
+    }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }
+    else
+    {
+        cout<<RED<<"The output file format is not supported: "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+    }
     //5. compute error if exact solution is given
     if(filename_exact!="")
     {
@@ -372,7 +390,7 @@ void UWC_p2s(string inputfilename,string outputfilename,
         {
             outdata[i]=outdata[i]-exactsolution[i];
         }
-        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum,true))return ;
+        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum))return ;
         delete[] exactsolution;
     }
     
@@ -423,7 +441,25 @@ void UWC_p2p(string inputfilename,string outputfilename,
     UWC_Gij(outdata,G_firstRow, indata,grdhead,num_thread);
     cout << "Finished\n";
     //4. write result
-    if (!SaveGrd(outputfilename, grdhead, outdata,extNum,true))return ;
+    string ext_outputfile=Path_GetExtName(outputfilename);
+    if(ext_outputfile=="grd" || ext_outputfile=="GRD")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        if (!SaveGrd(outputfilename, grdhead, outdata,extNum))return ;
+    }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2VTK(outputfilename,grdhead,outdata);
+    }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }
+    else
+    {
+        cout<<RED<<"The output file format is not supported: "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+    }
+    
     //5. compute error if exact solution is given
     if(filename_exact!="")
     {
@@ -433,7 +469,7 @@ void UWC_p2p(string inputfilename,string outputfilename,
         {
             outdata[i]=outdata[i]-exactsolution[i];
         }
-        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum,true))return ;
+        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum))return ;
         delete[] exactsolution;
     }
     
@@ -465,7 +501,25 @@ void UWC_p2p_f(string inputfilename,string outputfilename,double height1,double 
     UWC_p2p_f(indata,outdata,grdhead,rph);
 
     //4. write result
-    if (!SaveGrd(outputfilename, grdhead, outdata,extNum,true))return ;
+    // if (!SaveGrd(outputfilename, grdhead, outdata,extNum))return ;
+    string ext_outputfile=Path_GetExtName(outputfilename);
+    if(ext_outputfile=="grd" || ext_outputfile=="GRD")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        if (!SaveGrd(outputfilename, grdhead, outdata,extNum))return ;
+    }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2VTK(outputfilename,grdhead,outdata);
+    }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }
+    else
+    {
+        cout<<RED<<"The output file format is not supported: "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+    }
     //5. compute error if exact solution is given
     if(filename_exact!="")
     {
@@ -475,7 +529,7 @@ void UWC_p2p_f(string inputfilename,string outputfilename,double height1,double 
         {
             outdata[i]=outdata[i]-exactsolution[i];
         }
-        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum,true))return ;
+        if (!SaveGrd(outputfilename+"_error.grd", grdhead, outdata,extNum))return ;
         delete[] exactsolution;
     }
     //delete data array
@@ -691,7 +745,7 @@ double* ReadGrd(string filename, GrdHead& grdhead,int extNum)
     fin.open(filename, ios::in);
     if (!fin)
     {
-        cout << "Open file false: " << filename << "\n";
+        cout<<RED << "Open file false: "<<COLOR_DEFALUT << filename << "\n";
         return NULL;
     }
     string dsaa;
@@ -777,7 +831,7 @@ bool SaveGrd(string filename, GrdHead grdhead, double* data,int extNum, bool sav
     ofstream fout(filename);
     if (!fout)
     {
-        cout << "Open file false: " << filename << "\n";
+        cout<<RED << "Open file false: "<<COLOR_DEFALUT << filename << "\n";
         return false;
     }
     //compute zmin and zmax
@@ -821,24 +875,34 @@ bool SaveGrd(string filename, GrdHead grdhead, double* data,int extNum, bool sav
         fout << "\n";
     }
     fout.close();
+    
+    return true;
+}
+bool SaveGrd2xyz(string filename, GrdHead grdhead, double* data,int extNum,bool isInfo)
+{
     //save xyz format as well
-    if(savexxyz)
+    ofstream fxyz(filename);
+    if (!fxyz)
     {
-        ofstream fxyz(filename+".xyz");
-        // double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
-        // double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
-        for(int i=extNum;i<grdhead.rows-extNum;i++)
-        {
-            for(int j=extNum;j<grdhead.cols-extNum;j++)
-            {
-                fxyz<<grdhead.bounds[0]+j*dx<<"\t"
-                    <<grdhead.bounds[2]+i*dy<<"\t"
-                    <<data[j+grdhead.cols*i]
-                    <<endl;
-            }
-        }
-        fxyz.close();
+        cout<<RED << "Open file false: "<<COLOR_DEFALUT << filename << "\n";
+        return false;
+    }else
+    {
+        if(isInfo)cout<<filename<<GREEN<<" saved"<<COLOR_DEFALUT<<endl;
     }
+    double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
+    double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
+    for(int i=extNum;i<grdhead.rows-extNum;i++)
+    {
+        for(int j=extNum;j<grdhead.cols-extNum;j++)
+        {
+            fxyz<<grdhead.bounds[0]+j*dx<<"\t"
+                <<grdhead.bounds[2]+i*dy<<"\t"
+                <<data[j+grdhead.cols*i]
+                <<endl;
+        }
+    }
+    fxyz.close();
     return true;
 }
 //dataout=Gji*datain，
@@ -1079,7 +1143,25 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
         }
     }
     //4. write result
-    if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
+    // if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
+    string ext_outputfile=Path_GetExtName(outputfilename);
+    if(ext_outputfile=="grd" || ext_outputfile=="GRD")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
+    }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2VTK(outputfilename,grdhead,dataout);
+    }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2xyz(outputfilename, grdhead, dataout,extNum);
+    }
+    else
+    {
+        cout<<RED<<"The output file format is not supported: "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+    }
     //delete array
     delete[] gk;
     delete[] dk;
@@ -1139,7 +1221,7 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     cout<<"Point spacing dx: "<<dx<<"  dy: "<<dy<<endl;
     cout <<"Downward continue: ";
     cout<<""<<"\033[31m"<<((grdhead_topo.bounds[5]-height2)/dx)<<"\033[0m"<<" point spacing";
-    cout<<"to "<<"\033[31m"<<((grdhead_topo.bounds[4]-height2)/dx)<<"\033[0m"<<" point spacing"<<endl;
+    cout<<" to "<<"\033[31m"<<((grdhead_topo.bounds[4]-height2)/dx)<<"\033[0m"<<" point spacing"<<endl;
     cout << "*****************************************************\n";
     
     //3. kernel mat.
@@ -1181,7 +1263,25 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     }
 
     //4. write result
-    if (!SaveGrd(outputfilename, grdhead, dataout,extNum,true))return ;
+    // if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
+    string ext_outputfile=Path_GetExtName(outputfilename);
+    if(ext_outputfile=="grd" || ext_outputfile=="GRD")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
+    }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2VTK(outputfilename,grdhead,dataout);
+    }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2xyz(outputfilename, grdhead, dataout,extNum);
+    }
+    else
+    {
+        cout<<RED<<"The output file format is not supported: "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+    }
 
     if(filename_exact!="")
     {
@@ -1190,7 +1290,7 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
         {
             dataout[i]=dataout[i]-exactsolution[i];
         }
-        if (!SaveGrd(outputfilename+"_error.grd", grdhead, dataout,extNum,true))return ;
+        if (!SaveGrd(outputfilename+"_error.grd", grdhead, dataout,extNum))return ;
         delete[] exactsolution;
     }
     //delete array
@@ -1271,9 +1371,9 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
             fout_log<<endl;
         }
         
-        //5. write temporary result
-        if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-
+        //5. write temporary result,save as vtk
+        // if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK(path_tempResult+"/result_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1357,7 +1457,8 @@ double delta,int num_thread)
             rk1[i]=rk[i];
         }
         //5. write temporary result
-        if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        // if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK("dwc_temp_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(residual);
@@ -1441,7 +1542,8 @@ void DWC_s2p_CGLS(double** G,double* x, double* b,GrdHead grdhead,int extNum,dou
             rk1[i]=rk[i];
         }
         //5. write temporary result
-        if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        // if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK("dwc_temp_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(Norm2(rk,modelnum));
@@ -1537,7 +1639,8 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
             rk1[i]=rk[i];
         }
         //5. write temporary result
-        if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        // if (!SaveGrd("dwc_temp_"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK("dwc_temp_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(Norm2(rk,modelnum));
@@ -1628,7 +1731,7 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
             exit(0);
     }
     //5. write result
-    if (!SaveGrd(outputfilename, grdhead, dataout,extNum,true))return ;
+    if (!SaveGrd(outputfilename, grdhead, dataout,extNum))return ;
     //5. compute error if exact solution is given
     if(filename_exact!="")
     {
@@ -1637,7 +1740,7 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
         {
             dataout[i]=dataout[i]-exactsolution[i];
         }
-        if (!SaveGrd(outputfilename+"_error.grd", grdhead, dataout,extNum,true))return ;
+        if (!SaveGrd(outputfilename+"_error.grd", grdhead, dataout,extNum))return ;
         delete[] exactsolution;
     }
     //delete 
@@ -1712,8 +1815,8 @@ void DWC_p2p_ItegrationIter(double* G,double* x, double* b,
             fout_log<<endl;
         }
         //5. write temporary result
-        if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-
+        // if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK(path_tempResult+"/result_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1792,8 +1895,8 @@ void DWC_p2p_LandweberIter(double* G,double* x, double* b,
             fout_log<<endl;
         }
         //5. write temporary result
-        if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-
+        // if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK(path_tempResult+"/result_"+std::to_string(k)+".vtk",grdhead,x);
         //update progressbar
         bar_pos[0]=k+1;
         bar_pos[1]=log10(RE);
@@ -1874,8 +1977,8 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
         }
         
         //5. write temporary result
-        if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
-
+        // if (!SaveGrd(path_tempResult+"/"+std::to_string(k)+".grd", grdhead, x,extNum,false,false))return ;
+        SaveGrd2VTK(path_tempResult+"/result_"+std::to_string(k)+".vtk",grdhead,x);
         if(RE<REmin)break;
         //update progressbar
         bar_pos[0]=k+1;
