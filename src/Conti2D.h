@@ -12,11 +12,15 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
+#include <string.h>
 using namespace std;
 #include <math.h>
 #include "omp.h"
 #include "FFTN.h"
 #include "MultiProgressBar.h"
+#include <netcdf.h>
+#define ERRCODE 2
+#define ERR(e) {cout<<"Error:"<<nc_strerror(e)<<endl; exit(ERRCODE);}
 
 #define PI 3.141592653
 
@@ -90,6 +94,11 @@ double* ReadGrd(string filename,GrdHead& grdhead,int extNum);
  * @return false 
  */
 bool SaveGrd(string filename, GrdHead grdhead,double* data,int extNum, bool savexxyz=false,bool isInfo=true);
+
+
+bool SaveGrd2netCDF(string filename, GrdHead grdhead,double* data,int extNum,bool isInfo=true);
+
+
 /**
  * @brief Get the Kernal Matrix object
  * 
@@ -280,7 +289,17 @@ double Norm2_Gradient(double* result,GrdHead grdhead);
  * @param data 
  * @return int 
  */
-int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data);
+int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data,double z=0);
+/**
+ * @brief Save a grid field data on a topography as vtk format (3d)
+ * 
+ * @param outputfile 
+ * @param grdhead 
+ * @param data N=mxn array
+ * @param topo N=mxn array,  the dimension must be the save  as data
+ * @return int 
+ */
+int SaveGrd2VTK_topo(string outputfile,GrdHead grdhead,double* data,double* topo);
 bool SaveGrd2xyz(string filename, GrdHead grdhead, double* data,int extNum,bool isInfo=true);
 static void StartText()
 {

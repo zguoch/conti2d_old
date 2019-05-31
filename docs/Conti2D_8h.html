@@ -62,20 +62,24 @@ $(function() {
 <code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;iomanip&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
 <code>#include &quot;omp.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="FFTN_8h_source.html">FFTN.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="MultiProgressBar_8h_source.html">MultiProgressBar.h</a>&quot;</code><br />
+<code>#include &lt;netcdf.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Conti2D.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h__incl.svg" width="836" height="183"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h__incl.svg" width="1016" height="183"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h__dep__incl.svg" width="378" height="110"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="Conti2D_8h__dep__incl.svg" width="378" height="110"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </div>
 </div>
 <p><a href="Conti2D_8h_source.html">Go to the source code of this file.</a></p>
@@ -88,6 +92,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:a59923948809cf280fff5a914cc1e3781"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a59923948809cf280fff5a914cc1e3781.html#a59923948809cf280fff5a914cc1e3781">ERRCODE</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a59923948809cf280fff5a914cc1e3781"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588357de2986fdf4c1380190f7ae9f37"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a588357de2986fdf4c1380190f7ae9f37.html#a588357de2986fdf4c1380190f7ae9f37">ERR</a>(e)&#160;&#160;&#160;{cout&lt;&lt;&quot;Error:&quot;&lt;&lt;nc_strerror(e)&lt;&lt;endl; exit(<a class="el" href="Conti2D_8h_a59923948809cf280fff5a914cc1e3781.html#a59923948809cf280fff5a914cc1e3781">ERRCODE</a>);}</td></tr>
+<tr class="separator:a588357de2986fdf4c1380190f7ae9f37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a598a3330b3c21701223ee0ca14316eca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a598a3330b3c21701223ee0ca14316eca.html#a598a3330b3c21701223ee0ca14316eca">PI</a>&#160;&#160;&#160;3.141592653</td></tr>
 <tr class="separator:a598a3330b3c21701223ee0ca14316eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1811514ed34916c0a8294b82af37cdd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_aa1811514ed34916c0a8294b82af37cdd.html#aa1811514ed34916c0a8294b82af37cdd">DWC_CGLS</a>&#160;&#160;&#160;1</td></tr>
@@ -149,6 +157,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a69964a1746c72c7a75836f4d2d544108"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a69964a1746c72c7a75836f4d2d544108.html#a69964a1746c72c7a75836f4d2d544108">SaveGrd</a> (string filename, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data, int extNum, bool savexxyz=false, bool isInfo=true)</td></tr>
 <tr class="memdesc:a69964a1746c72c7a75836f4d2d544108"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a Surfer Grid data to file.  <a href="Conti2D_8h_a69964a1746c72c7a75836f4d2d544108.html#a69964a1746c72c7a75836f4d2d544108">More...</a><br /></td></tr>
 <tr class="separator:a69964a1746c72c7a75836f4d2d544108"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3903d577a5564e77b17bfc93f2b21c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_ac3903d577a5564e77b17bfc93f2b21c0.html#ac3903d577a5564e77b17bfc93f2b21c0">SaveGrd2netCDF</a> (string filename, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data, int extNum, bool isInfo=true)</td></tr>
+<tr class="separator:ac3903d577a5564e77b17bfc93f2b21c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add24cc6bc62d691596ed7b7d3c04c231"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_add24cc6bc62d691596ed7b7d3c04c231.html#add24cc6bc62d691596ed7b7d3c04c231">GetKernalMatrix</a> (<a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *G, const double rph, int num_thread=4)</td></tr>
 <tr class="memdesc:add24cc6bc62d691596ed7b7d3c04c231"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Kernal Matrix object.  <a href="Conti2D_8h_add24cc6bc62d691596ed7b7d3c04c231.html#add24cc6bc62d691596ed7b7d3c04c231">More...</a><br /></td></tr>
 <tr class="separator:add24cc6bc62d691596ed7b7d3c04c231"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -238,9 +248,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a43fc3af75243a047d61aadea31c0fa9c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c">Norm2_Gradient</a> (double *result, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead)</td></tr>
 <tr class="memdesc:a43fc3af75243a047d61aadea31c0fa9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get 2nd norm of the gradient of a grid data.  <a href="Conti2D_8h_a43fc3af75243a047d61aadea31c0fa9c.html#a43fc3af75243a047d61aadea31c0fa9c">More...</a><br /></td></tr>
 <tr class="separator:a43fc3af75243a047d61aadea31c0fa9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2ce25b899be8dca564dd7dccde5e671"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_ab2ce25b899be8dca564dd7dccde5e671.html#ab2ce25b899be8dca564dd7dccde5e671">SaveGrd2VTK</a> (string outputfile, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data)</td></tr>
-<tr class="memdesc:ab2ce25b899be8dca564dd7dccde5e671"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save results of at each iteration step as vtk file.  <a href="Conti2D_8h_ab2ce25b899be8dca564dd7dccde5e671.html#ab2ce25b899be8dca564dd7dccde5e671">More...</a><br /></td></tr>
-<tr class="separator:ab2ce25b899be8dca564dd7dccde5e671"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95d10922f6494b553b7c136bdab19f52"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a95d10922f6494b553b7c136bdab19f52.html#a95d10922f6494b553b7c136bdab19f52">SaveGrd2VTK</a> (string outputfile, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data, double z=0)</td></tr>
+<tr class="memdesc:a95d10922f6494b553b7c136bdab19f52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save results of at each iteration step as vtk file.  <a href="Conti2D_8h_a95d10922f6494b553b7c136bdab19f52.html#a95d10922f6494b553b7c136bdab19f52">More...</a><br /></td></tr>
+<tr class="separator:a95d10922f6494b553b7c136bdab19f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad82d3e86d7bd949a1311c660977b9c1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_aad82d3e86d7bd949a1311c660977b9c1.html#aad82d3e86d7bd949a1311c660977b9c1">SaveGrd2VTK_topo</a> (string outputfile, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data, double *topo)</td></tr>
+<tr class="memdesc:aad82d3e86d7bd949a1311c660977b9c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a grid field data on a topography as vtk format (3d)  <a href="Conti2D_8h_aad82d3e86d7bd949a1311c660977b9c1.html#aad82d3e86d7bd949a1311c660977b9c1">More...</a><br /></td></tr>
+<tr class="separator:aad82d3e86d7bd949a1311c660977b9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b7e7dce701e1176ad94a903ed0654f6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a0b7e7dce701e1176ad94a903ed0654f6.html#a0b7e7dce701e1176ad94a903ed0654f6">SaveGrd2xyz</a> (string filename, <a class="el" href="structGrdHead.html">GrdHead</a> grdhead, double *data, int extNum, bool isInfo=true)</td></tr>
+<tr class="separator:a0b7e7dce701e1176ad94a903ed0654f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1fa497bd2e5d983e49f2401e3470c92"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_af1fa497bd2e5d983e49f2401e3470c92.html#af1fa497bd2e5d983e49f2401e3470c92">StartText</a> ()</td></tr>
 <tr class="separator:af1fa497bd2e5d983e49f2401e3470c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5721c5478e8afad6433cd59eae9b2d67"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Conti2D_8h_a5721c5478e8afad6433cd59eae9b2d67.html#a5721c5478e8afad6433cd59eae9b2d67">Text_Axis</a> ()</td></tr>
@@ -257,7 +272,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 22 2019 20:39:14 for Conti2D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 31 2019 21:18:59 for Conti2D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

@@ -376,6 +376,10 @@ void UWC_p2s(string inputfilename,string outputfilename,
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
         SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }else if(ext_outputfile=="nc")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2netCDF(outputfilename, grdhead, outdata,extNum);
     }
     else
     {
@@ -441,6 +445,7 @@ void UWC_p2p(string inputfilename,string outputfilename,
     UWC_Gij(outdata,G_firstRow, indata,grdhead,num_thread);
     cout << "Finished\n";
     //4. write result
+    // string basename_infile=Path_GetBaseName(inputfilename);
     string ext_outputfile=Path_GetExtName(outputfilename);
     if(ext_outputfile=="grd" || ext_outputfile=="GRD")
     {
@@ -449,11 +454,17 @@ void UWC_p2p(string inputfilename,string outputfilename,
     }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
-        SaveGrd2VTK(outputfilename,grdhead,outdata);
+        SaveGrd2VTK(outputfilename,grdhead,outdata,height2);
+        string filename_outfile=Path_GetFileName(outputfilename);
+        SaveGrd2VTK(filename_outfile+"_origin.vtk",grdhead,indata,height1);//save the origin data as well
     }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
         SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }else if(ext_outputfile=="nc")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2netCDF(outputfilename, grdhead, outdata,extNum);
     }
     else
     {
@@ -510,11 +521,17 @@ void UWC_p2p_f(string inputfilename,string outputfilename,double height1,double 
     }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
-        SaveGrd2VTK(outputfilename,grdhead,outdata);
+        SaveGrd2VTK(outputfilename,grdhead,outdata,height2);
+        string filename_outfile=Path_GetFileName(outputfilename);
+        SaveGrd2VTK(filename_outfile+"_origin.vtk",grdhead,indata,height1);//save the origin data as well
     }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
         SaveGrd2xyz(outputfilename, grdhead, outdata,extNum);
+    }else if(ext_outputfile=="nc")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2netCDF(outputfilename, grdhead, outdata,extNum);
     }
     else
     {
@@ -905,6 +922,88 @@ bool SaveGrd2xyz(string filename, GrdHead grdhead, double* data,int extNum,bool 
     fxyz.close();
     return true;
 }
+/*===================================
+ Save Grd data as netCDF format
+ ====================================*/
+bool SaveGrd2netCDF(string filename, GrdHead grdhead,double* data,int extNum,bool isInfo)
+{
+    double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
+    double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
+    const int NDIMS=2;
+    int ncid, x_dimid, y_dimid, varid,x_varid,y_varid;
+    int dimids[NDIMS];
+    // nx and ny
+    int NX=grdhead.rows-2*extNum;
+    int NY=grdhead.cols-2*extNum;
+    // data
+    double *x=new double[NX];
+    double *y=new double[NY];
+    double** data_out=new double* [NX];
+    for(int i=0;i<NX;i++)
+    {
+        data_out[i]=new double[NY];
+    }
+    // attribute, e.g. unit
+    char field_units[]="unit of potential field";
+    char name_x[]="x";
+    char name_Y[]="Y";
+    int retval;/* Error handling. */
+    for(int i=0;i<NX;i++)
+    {
+        x[i]=grdhead.bounds[0]+i*dx;
+    }
+    for(int i=0;i<NY;i++)
+    {
+        y[i]=grdhead.bounds[2]+i*dy;
+    }
+    //write data
+    for (int i = extNum; i < grdhead.rows-extNum; i++)
+    {
+        for (int j = extNum; j < grdhead.cols-extNum; j++)
+        {
+            data_out[i-extNum][j-extNum]=data[j+grdhead.cols*i];
+        }
+    }
+    /* Create the  nc file. */
+    if ((retval = nc_create(filename.c_str(), NC_CLOBBER, &ncid)))
+      ERR(retval);
+    /* Define the dimensions. NetCDF will hand back an ID for each. */
+   if ((retval = nc_def_dim(ncid, name_x, NX, &x_dimid)))
+      ERR(retval);
+   if ((retval = nc_def_dim(ncid, name_Y, NY, &y_dimid)))
+      ERR(retval);
+    /* Define coordinate netCDF variables.*/
+   if ((retval = nc_def_var(ncid, name_x, NC_DOUBLE, 1, &x_dimid,&x_varid)))
+      ERR(retval);
+   if ((retval = nc_def_var(ncid, name_Y, NC_DOUBLE, 1, &y_dimid,&y_varid)))
+      ERR(retval);
+    /* The dimids array is used to pass the IDs of the dimensions of the variable. */
+   dimids[0] = x_dimid;
+   dimids[1] = y_dimid;
+   /* Define the variable.  */
+   if ((retval = nc_def_var(ncid, "Result by conti2d", NC_DOUBLE, NDIMS,
+			    dimids, &varid)))
+      ERR(retval);
+    /* End define mode. This tells netCDF we are done defining metadata. */
+   if ((retval = nc_enddef(ncid)))
+      ERR(retval);
+    if ((retval = nc_put_var_double(ncid, x_varid, &x[0])))
+      ERR(retval);
+   if ((retval = nc_put_var_double(ncid, y_varid, &y[0])))
+      ERR(retval);
+   if ((retval = nc_put_var_double(ncid, varid, &data_out[0][0])))
+      ERR(retval);
+    /* Close the file. */
+   if ((retval = nc_close(ncid)))
+      ERR(retval);
+
+    // delete pointer
+    delete[] x,y;
+    for(int i=0;i<NX;i++)delete[] data_out[i];
+    delete[] data_out;
+    return true;
+}
+
 //dataout=Gji*datain，
 void UWC_Gji(double* b,double** G,double* x, int modelnum,int num_thread)
 {
@@ -1152,11 +1251,17 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
     }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
-        SaveGrd2VTK(outputfilename,grdhead,dataout);
+        SaveGrd2VTK(outputfilename,grdhead,dataout,height2);
+        string filename_outfile=Path_GetFileName(outputfilename);
+        SaveGrd2VTK(filename_outfile+"_origin.vtk",grdhead,indata,height1);//save the origin data as well
     }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
         SaveGrd2xyz(outputfilename, grdhead, dataout,extNum);
+    }else if(ext_outputfile=="nc")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2netCDF(outputfilename, grdhead, dataout,extNum);
     }
     else
     {
@@ -1272,11 +1377,17 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     }else if(ext_outputfile=="vtk" || ext_outputfile=="VTK")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
-        SaveGrd2VTK(outputfilename,grdhead,dataout);
+        SaveGrd2VTK(outputfilename,grdhead,dataout,height2);
+        string filename_outfile=Path_GetFileName(outputfilename);
+        SaveGrd2VTK_topo(filename_outfile+"_origin.vtk",grdhead,indata,topo);//save the origin data as well
     }else if(ext_outputfile=="xyz" || ext_outputfile=="txt" || ext_outputfile=="dat")
     {
         cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
         SaveGrd2xyz(outputfilename, grdhead, dataout,extNum);
+    }else if(ext_outputfile=="nc")
+    {
+        cout<<GREEN<<"Output file format is : "<<ext_outputfile<<COLOR_DEFALUT<<endl;
+        SaveGrd2netCDF(outputfilename, grdhead, dataout,extNum);
     }
     else
     {
@@ -2152,7 +2263,7 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     return sqrt(sum);
  }
 
- int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data)
+ int SaveGrd2VTK(string outputfile,GrdHead grdhead,double* data,double z)
 {
     //vtk format
     ofstream fout(outputfile);
@@ -2178,12 +2289,54 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
         {
             fout<<grdhead.bounds[0]+ix*dx<<" "
                 <<grdhead.bounds[2]+iy*dy<<" "
-                <<0<<" ";
+                <<z<<" ";
             index++;
         }
     }fout<<endl;
     fout<<"POINT_DATA "<<num_pt<<endl;
-    fout<<"SCALARS Gravity float"<<endl;
+    fout<<"SCALARS PotentialField float"<<endl;
+    fout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<num_pt;i++)
+    {
+        fout<<data[i]<<" ";
+    }fout<<endl;
+    fout.close();
+    // cout<<"Output VTK file of result finished"<<endl;
+    return 0;
+}
+
+int SaveGrd2VTK_topo(string outputfile,GrdHead grdhead,double* data,double* topo)
+{
+    //vtk format
+    ofstream fout(outputfile);
+    if(!fout)
+    {
+        cout<<endl;
+        cout<<"["<<RED<<"error"<<COLOR_DEFALUT<<"]open file failed: "<<outputfile+".vtk"<<endl;
+        exit(0);
+    }
+    double dx=(grdhead.bounds[1]-grdhead.bounds[0])/(grdhead.cols-1);
+    double dy=(grdhead.bounds[3]-grdhead.bounds[2])/(grdhead.rows-1);
+    int num_pt=grdhead.cols*grdhead.rows;
+    fout<<"# vtk DataFile Version 2.0"<<endl;
+    fout<<"VTK from vtk2gm"<<endl;
+    fout<<"ASCII"<<endl;
+    fout<<"DATASET STRUCTURED_GRID"<<endl;
+    fout<<"DIMENSIONS "<<grdhead.cols<<" "<<grdhead.rows<<" 1"<<endl;
+    fout<<"POINTS "<<num_pt<<" float"<<endl;
+    int index=0;
+    for(int iy=0;iy<grdhead.rows;iy++)
+    {
+        for(int ix=0;ix<grdhead.cols;ix++)
+        {
+            fout<<grdhead.bounds[0]+ix*dx<<" "
+                <<grdhead.bounds[2]+iy*dy<<" "
+                <<topo[iy*grdhead.cols+ix]<<" ";
+            index++;
+        }
+    }fout<<endl;
+    fout<<"POINT_DATA "<<num_pt<<endl;
+    fout<<"SCALARS PotentialField float"<<endl;
     fout<<"LOOKUP_TABLE default"<<endl;
     for(int i=0;i<num_pt;i++)
     {

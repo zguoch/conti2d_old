@@ -1,7 +1,6 @@
 
 #include "Conti2D.h"
 
-
 bool isNum(string str)
 {
     stringstream sin(str);
