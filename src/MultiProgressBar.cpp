@@ -1,14 +1,25 @@
+
 #include "MultiProgressBar.h"
 #include <iomanip>
 #include "Conti2D.h"
 
 void MultiProgressBar::init_colors()
 {
-    m_colors.push_back("\033[35m"); //Purple
-    m_colors.push_back("\033[34m"); //blue
-    m_colors.push_back("\033[32m"); //green
-    m_colors.push_back("\033[33m"); //yellow
-    m_colors.push_back("\033[31m"); //red
+#ifdef _WIN32
+	m_colors.push_back(""); //Purple
+	m_colors.push_back(""); //blue
+	m_colors.push_back(""); //green
+	m_colors.push_back(""); //yellow
+	m_colors.push_back(""); //red
+#else
+	m_colors.push_back("\033[35m"); //Purple
+	m_colors.push_back("\033[34m"); //blue
+	m_colors.push_back("\033[32m"); //green
+	m_colors.push_back("\033[33m"); //yellow
+	m_colors.push_back("\033[31m"); //red
+#endif // _WIN32
+
+    
 }
 MultiProgressBar::~MultiProgressBar()
 {
@@ -17,9 +28,10 @@ MultiProgressBar::MultiProgressBar(double total, int color) : m_bar_char_left('#
                                                               m_bar_char_right('-'),
                                                               m_defaultcolor(color)
 {
-    struct winsize w;
+   /* struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    m_length_bar = w.ws_col - 35;
+    m_length_bar = w.ws_col - 35;*/
+	m_length_bar = 30;
     init_colors();
     m_total.push_back(total);
     cout << endl;
@@ -39,9 +51,10 @@ MultiProgressBar::MultiProgressBar(vector<double> left, vector<double> right, ve
                                                                                                       m_bar_char_right('-'),
                                                                                                       m_title(title)
 {
-    struct winsize w;
+    /*struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    m_length_bar = w.ws_col - 35;
+    m_length_bar = w.ws_col - 35;*/
+	m_length_bar = 30;
 
     init_colors();
     if (right.size() != left.size())
@@ -85,38 +98,63 @@ void MultiProgressBar::Update(vector<double> current_pos)
         cout << "The size of current_pos, m_total, m_title have different size in MultiProgressBar" << endl;
         exit(0);
     }
-    for (int k = 0; k < m_total.size(); k++)
-    {
-        cout << "\r";
-        if (k == 0)
-            MOVEUP(m_total.size());
-        // m_current_index[k]++;
-        m_percent[k] = (fabs((current_pos[k]) - m_left[k]) / m_total[k]) * 100;
-        //how many are completed
-        int pos = int(m_percent[k] * m_factor);
-        for (int i = 0; i <= pos; i++)
-            m_bar_str[k][i] = m_bar_char_left;
-        for (int i = pos + 1; i < m_length_bar; i++)
-            m_bar_str[k][i] = m_bar_char_right;
-        if (m_title[k] == "")
-        {
-            cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
-                 << m_bar_str[k]
-                 << COLOR_DEFALUT << "]"
-                 << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k]) << "%"
-                 << COLOR_DEFALUT << endl;
-        }
-        else
-        {
-            cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
-                 << m_bar_str[k]
-                 << COLOR_DEFALUT << "]"
-                 << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k])
-                 << "% " << COLOR_DEFALUT
-                 << "[" << setw(m_maxLength_title) << left << m_title[k]
-                 << "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFALUT
-                 << "]"
-                 << endl;
-        }
-    }
+	if (m_total.size() == 1)
+	{
+		int k = 0;
+		cout << "\r";
+		// m_current_index[k]++;
+		m_percent[k] = (fabs((current_pos[k]) - m_left[k]) / m_total[k]) * 100;
+		//how many are completed
+		int pos = int(m_percent[k] * m_factor);
+		for (int i = 0; i <= pos; i++)
+			m_bar_str[k][i] = m_bar_char_left;
+		for (int i = pos + 1; i < m_length_bar; i++)
+			m_bar_str[k][i] = m_bar_char_right;
+		if (m_title[k] == "")
+		{
+			cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
+				<< m_bar_str[k]
+				<< COLOR_DEFALUT << "]"
+				<< m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k]) << "%"
+				<< COLOR_DEFALUT;
+		}
+	}
+	else
+	{
+		for (int k = 0; k < m_total.size(); k++)
+		{
+			cout << "\r";
+			if (k == 0)
+				MOVEUP(m_total.size());
+			// m_current_index[k]++;
+			m_percent[k] = (fabs((current_pos[k]) - m_left[k]) / m_total[k]) * 100;
+			//how many are completed
+			int pos = int(m_percent[k] * m_factor);
+			for (int i = 0; i <= pos; i++)
+				m_bar_str[k][i] = m_bar_char_left;
+			for (int i = pos + 1; i < m_length_bar; i++)
+				m_bar_str[k][i] = m_bar_char_right;
+			if (m_title[k] == "")
+			{
+				cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
+					<< m_bar_str[k]
+					<< COLOR_DEFALUT << "]"
+					<< m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k]) << "%"
+					<< COLOR_DEFALUT << endl;
+			}
+			else
+			{
+				cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
+					<< m_bar_str[k]
+					<< COLOR_DEFALUT << "]"
+					<< m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k])
+					<< "% " << COLOR_DEFALUT
+					<< "[" << setw(m_maxLength_title) << left << m_title[k]
+					<< "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFALUT
+					<< "]"
+					<< endl;
+			}
+		}
+	}
+    
 }

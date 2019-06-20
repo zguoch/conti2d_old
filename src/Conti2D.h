@@ -29,6 +29,39 @@ using namespace std;
 #define DWC_INTEGRALITERATION 3
 #define DWC_LANDWEBER 4
 
+#ifdef _WIN32
+#define ERROR_COUT ""
+#define WARN_COUT ""
+#define ERROR_COUT ""
+#define PURPLE ""
+#define RED ""
+#define GREEN ""
+#define YELLOW ""
+#define BLUE ""
+#define COLOR_DEFALUT ""
+//#include <unistd.h>
+// clean screen
+#define CLEAR() printf("\033[2J") 
+// move up cursor
+#define MOVEUP(x) printf("\033[%dA", (x)) 
+// move down cursor
+#define MOVEDOWN(x) printf("\033[%dB", (x)) 
+// move left cursor
+#define MOVELEFT(y) printf("\033[%dD", (y)) 
+// move right cursor
+#define MOVERIGHT(y) printf("\033[%dC",(y)) 
+// locate cursor
+#define MOVETO(x,y) printf("\033[%d;%dH", (x), (y)) 
+// reset cursor
+#define RESET_CURSOR() printf("\033[H") 
+// hide cursor
+#define HIDE_CURSOR() printf("\033[?25l") 
+// show cursor
+#define SHOW_CURSOR() printf("\033[?25h") 
+#define HIGHT_LIGHT() printf("\033[7m")
+#define UN_HIGHT_LIGHT() printf("\033[27m")
+////////////////////////////////////
+#else 
 #define ERROR_COUT "["<<"\033[31mError"<<"\033[0m] "
 #define WARN_COUT "["<<"\033[33mWarning"<<"\033[0m] "
 #define ERROR_COUT "["<<"\033[31mError"<<"\033[0m] "
@@ -38,7 +71,7 @@ using namespace std;
 #define YELLOW "\033[33m"
 #define BLUE "\033[34m"
 #define COLOR_DEFALUT "\033[0m"
-#include <unistd.h>
+//#include <unistd.h>
 #define MOVEUP(x) printf("\033[%dA", (x))
 // clean screen
 #define CLEAR() printf("\033[2J") 
@@ -61,6 +94,9 @@ using namespace std;
 #define HIGHT_LIGHT() printf("\033[7m")
 #define UN_HIGHT_LIGHT() printf("\033[27m")
 ////////////////////////////////////
+#endif
+
+
 
 /**
  * @brief head information of a grid data, e.g. Goldernsoftward Surfer Grid.
@@ -304,24 +340,23 @@ bool SaveGrd2xyz(string filename, GrdHead grdhead, double* data,int extNum,bool 
 static void StartText()
 {
     //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
-    cout<<"\033[33m";       //print text in yellow color
-    cout << "***************************************************\n";
-    cout << "*                 program conti2d                 *\n";
-    cout << "*                 ~~~~~~~ ~~~~~~~                 *\n";
-    cout << "*                                                 *\n";
-    cout << "* Analytical continuation of potential field data *\n";
-    cout << "*  - Upward Continuation from plane to plane      *\n";
-    cout << "*  - Upward Continuation from plane to surface    *\n";
-    cout << "*  - Downward Continuation from plane to plane    *\n";
-    cout << "*  - Downward Continuation from surface to plane  *\n";
-    cout << "*                                                 *\n";
-    cout << "* See head file for input/output details.         *\n";
-    cout << "* (c) Zhikui Guo, CUG, Aug 2016, Hangzhou         *\n";
-    cout << "*                                                 *\n";
-    cout << "***************************************************\n";
-    cout << "\n\n";
-    cout<<"\033[0m";
-                                                                                                                                                                                                                      
+	cout << YELLOW;       //print text in yellow color
+	cout << "***************************************************\n";
+	cout << "*                 program conti2d                 *\n";
+	cout << "*                 ~~~~~~~ ~~~~~~~                 *\n";
+	cout << "*                                                 *\n";
+	cout << "* Analytical continuation of potential field data *\n";
+	cout << "*  - Upward Continuation from plane to plane      *\n";
+	cout << "*  - Upward Continuation from plane to surface    *\n";
+	cout << "*  - Downward Continuation from plane to plane    *\n";
+	cout << "*  - Downward Continuation from surface to plane  *\n";
+	cout << "*                                                 *\n";
+	cout << "* See head file for input/output details.         *\n";
+	cout << "* (c) Zhikui Guo, CUG, Aug 2016, Hangzhou         *\n";
+	cout << "*                                                 *\n";
+	cout << "***************************************************\n";
+	cout << "\n\n";
+	cout << COLOR_DEFALUT;                                                                                                                                                                                                                  
 }
 //static function
 static void Text_Axis()
@@ -335,42 +370,45 @@ static void Text_Axis()
     cout<<"|"<<endl;
     cout<<"|z(-)"<<endl;
 }
+/*windows console text color*/
+
+
 static void helpINFO()
 {
-    string version="2.0";
-    string author="Zhikui Guo";
-    string locus="SIO, Hangzhou";
-    unsigned int wordWidth=20;
-    // time_t now=time(0);
-    // char* now_str=ctime(&now);
-    string now_str="Aug 8, 2016";
+	string version = "2.0";
+	string author = "Zhikui Guo";
+	string locus = "SIO, Hangzhou";
+	unsigned int wordWidth = 20;
+	// time_t now=time(0);
+	// char* now_str=ctime(&now);
+	string now_str = "Aug 8, 2016";
 
-    //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
-    cout<<"===================== conti2d ======================"<<endl;
-    cout<<"Analytical continuation of potential field data"<<endl;
-    cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Author \033[032m"<<author<<"\033[0m"<<endl;
-    cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Locus \033[032m"<<locus<<"\033[0m"<<endl;
-    cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Date \033[032m"<<now_str<<"\033[0m"<<endl;
-    cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Version \033[032m"<<version<<"\033[0m"<<endl;
-    Text_Axis();
-    cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Synopsis:\033[031m"
-        <<"conti2d "
-        <<GREEN<<"input.grd "
-        <<PURPLE<<"-G"<<GREEN<<"output.grd "
-        <<PURPLE<<"-E"<<GREEN<<"extBoundNum "
-        <<PURPLE<<"-H"<<GREEN<<"level_outputdata|.grd "
-        <<PURPLE<<"-T"<<GREEN<<"level_inputdata|.grd "
-        <<PURPLE<<"-D"<<COLOR_DEFALUT<<"["
-        <<GREEN<<"+T"<<COLOR_DEFALUT<<"Tik_Par"<<PURPLE<<"|"
-        <<GREEN<<"+I"<<COLOR_DEFALUT<<"It_Par"<<PURPLE<<"|"
-        <<GREEN<<"+L"<<COLOR_DEFALUT<<"Landweber_Par"<<PURPLE<<"|"
-        <<GREEN<<"+C"<<COLOR_DEFALUT<<"CGLS_Par"<<PURPLE<<""
-        <<COLOR_DEFALUT<<"] "
-        <<PURPLE<<"-t"<<GREEN<<"threads "
-        <<PURPLE<<"-f"<<GREEN<<"[FrequencyDomain] "
-        <<COLOR_DEFALUT<<endl;
-    cout<<"===================================================="<<endl<<endl;
-    // exit(1);
+	//30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
+	cout << "===================== conti2d ======================" << endl;
+	cout << "Analytical continuation of potential field data" << endl;
+	cout << setw(wordWidth) << setiosflags(ios::left) << "Author " << GREEN << author << COLOR_DEFALUT << endl;
+	cout << setw(wordWidth) << setiosflags(ios::left) << "Locus " << GREEN << locus << COLOR_DEFALUT << endl;
+	cout << setw(wordWidth) << setiosflags(ios::left) << "Date " << GREEN << now_str << COLOR_DEFALUT << endl;
+	cout << setw(wordWidth) << setiosflags(ios::left) << "Version " << GREEN << version << COLOR_DEFALUT << endl;
+	Text_Axis();
+	cout << setw(wordWidth) << setiosflags(ios::left) << "Synopsis:" << RED
+		<< "conti2d "
+		<< GREEN << "input.grd "
+		<< PURPLE << "-G" << GREEN << "output.grd "
+		<< PURPLE << "-E" << GREEN << "extBoundNum "
+		<< PURPLE << "-H" << GREEN << "level_outputdata|.grd "
+		<< PURPLE << "-T" << GREEN << "level_inputdata|.grd "
+		<< PURPLE << "-D" << COLOR_DEFALUT << "["
+		<< GREEN << "+T" << COLOR_DEFALUT << "Tik_Par" << PURPLE << "|"
+		<< GREEN << "+I" << COLOR_DEFALUT << "It_Par" << PURPLE << "|"
+		<< GREEN << "+L" << COLOR_DEFALUT << "Landweber_Par" << PURPLE << "|"
+		<< GREEN << "+C" << COLOR_DEFALUT << "CGLS_Par" << PURPLE << ""
+		<< COLOR_DEFALUT << "] "
+		<< PURPLE << "-t" << GREEN << "threads "
+		<< PURPLE << "-f" << GREEN << "[FrequencyDomain] "
+		<< COLOR_DEFALUT << endl;
+	cout << "====================================================" << endl << endl;
+	// exit(1);
 }
 static void StartText_artASCII()
 {
@@ -386,17 +424,19 @@ static void StartText_artASCII()
 //error info
 static void OutputErrorinfo(string info)
 {
-    cout<<"\033[31m";       //print error infor in red color
-    cout<<info<<endl;
-    cout<<"\033[0m";
-    exit(0);
+	cout << RED;       //print error infor in red color
+	cout << info << endl;
+	cout << COLOR_DEFALUT;
+	exit(0);
 }
+
+
 //warning info
 static void OutputWarninginfo(string info)
 {
-    cout<<"\033[34m";       //print warning info as blue color
-    cout<<info<<endl;
-    cout<<"\033[0m";
+	cout << BLUE;       //print warning info as blue color
+	cout << info << endl;
+	cout << COLOR_DEFALUT;
 }
 
 #endif 

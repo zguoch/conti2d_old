@@ -562,7 +562,7 @@ int UWC_p2p_f(double* inputdata,double* result,GrdHead grdhead,double rph)
 	int N = number_x*number_y;
 	double* originaldata = inputdata;
 	fftw_complex* out_c = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)* N);
-	FFT2d(number_y, number_x, originaldata, out_c);			//傅里叶变换
+	FFT2d(number_y, number_x, originaldata, out_c);
 	double *bounds = grdhead.bounds;
 	double dy = fabs(bounds[3] - bounds[2]) / (number_y - 1), dx = fabs(bounds[1] - bounds[0]) / (number_x - 1);
 	double en = dy*(number_y), em = dx*(number_x);
@@ -1004,7 +1004,6 @@ bool SaveGrd2netCDF(string filename, GrdHead grdhead,double* data,int extNum,boo
     return true;
 }
 
-//dataout=Gji*datain，
 void UWC_Gji(double* b,double** G,double* x, int modelnum,int num_thread)
 {
     omp_set_num_threads(num_thread);
@@ -1108,9 +1107,9 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
     cout <<"        Size of kernel matrix: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
     cout <<"        Memory: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
     cout <<"        Downward continuation  ";
-    cout <<"\033[31m";       //red
+    cout <<RED;       //red
     cout <<(rph/dx);
-    cout <<"\033[0m";
+    cout << COLOR_DEFALUT;
     cout <<"  point spacing\n";
     cout << "*****************************************************\n";
     
@@ -1231,9 +1230,9 @@ int extNum, double TRP,int num_thread, bool isProgress,bool useOldKernel)
             error_MHS += pow(gk[i], 2.0);
         }
         printf("The %dth iteration  ,error:", k);
-        cout<<"\033[32m"; 
+        cout<<GREEN; 
         printf("%lf\t", error_MHS);
-        cout<<"\033[0m";
+        cout<< COLOR_DEFALUT;
         printf("%lf\t%lf\n", aerfak, thetak);
         error_vector[k] = error_MHS;
         if (error_MHS<daierta)
@@ -1325,8 +1324,8 @@ void DWC_s2p(string inputfilename,string outputfilename,string topoFile,
     cout <<"Memory of kernel mat.: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,2)/pow(1024.0,2)<< "Mb"<<endl;
     cout<<"Point spacing dx: "<<dx<<"  dy: "<<dy<<endl;
     cout <<"Downward continue: ";
-    cout<<""<<"\033[31m"<<((grdhead_topo.bounds[5]-height2)/dx)<<"\033[0m"<<" point spacing";
-    cout<<" to "<<"\033[31m"<<((grdhead_topo.bounds[4]-height2)/dx)<<"\033[0m"<<" point spacing"<<endl;
+    cout<<""<<RED<<((grdhead_topo.bounds[5]-height2)/dx)<< COLOR_DEFALUT <<" point spacing";
+    cout<<" to "<<RED<<((grdhead_topo.bounds[4]-height2)/dx)<< COLOR_DEFALUT <<" point spacing"<<endl;
     cout << "*****************************************************\n";
     
     //3. kernel mat.
@@ -1434,10 +1433,16 @@ void DWC_s2p_ItegrationIter(double** G,double* x, double* b,
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
     {
-        command="rm "+path_tempResult+"/*.grd";
+	#ifdef _WIN32
+			//define something for Windows (32-bit and 64-bit, this part is common)
+			command = "del " + path_tempResult + "\\*.vtk";
+	#else
+			command = "rm " + path_tempResult + "/*.grd";
+	#endif
+        //command="rm "+path_tempResult+"/*.grd";
         if(!system(command.c_str()))
         {
-            cout<<GREEN<<"Clean .grd file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
+            cout<<GREEN<<"Clean .vtk file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
         }
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
@@ -1801,9 +1806,9 @@ void DWC_s2p_Tikhonov(double** G,double* x, double* b0,GrdHead grdhead,int extNu
     cout <<"Size of kernel mat.: "<<grdhead.rows*grdhead.cols<<" X "<<grdhead.rows*grdhead.cols<<endl;
     cout <<"Only save the first row of kernel mat: "<<sizeof(double)*pow(grdhead.rows*grdhead.cols,1)/pow(1024.0,2)<< "Mb"<<endl;
     cout <<"Downward continuation:  ";
-    cout <<"\033[31m";       
+    cout <<RED;       
     cout <<(rph/dx);
-    cout <<"\033[0m";
+    cout <<COLOR_DEFALUT;
     cout <<"  point spacing\n";
     cout << "*****************************************************\n";
 
@@ -1879,10 +1884,16 @@ void DWC_p2p_ItegrationIter(double* G,double* x, double* b,
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
     {
-        command="rm "+path_tempResult+"/*.grd";
+#ifdef _WIN32
+		//define something for Windows (32-bit and 64-bit, this part is common)
+		command = "del " + path_tempResult + "\\*.vtk";
+#else
+		command = "rm " + path_tempResult + "/*.grd";
+#endif
+        //command="rm "+path_tempResult+"/*.grd";
         if(!system(command.c_str()))
         {
-            cout<<GREEN<<"Clean .grd file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
+            cout<<GREEN<<"Clean .vtk file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
         }
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
@@ -1957,10 +1968,16 @@ void DWC_p2p_LandweberIter(double* G,double* x, double* b,
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
     {
-        command="rm "+path_tempResult+"/*.grd";
+#ifdef _WIN32
+		//define something for Windows (32-bit and 64-bit, this part is common)
+		command = "del " + path_tempResult + "\\*.vtk";
+#else
+		command = "rm " + path_tempResult + "/*.grd";
+#endif
+        //command="rm "+path_tempResult+"/*.grd";
         if(!system(command.c_str()))
         {
-            cout<<GREEN<<"Clean .grd file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
+            cout<<GREEN<<"Clean .vtk file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
         }
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
@@ -2037,10 +2054,16 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
     string command="mkdir "+path_tempResult;
     if(system(command.c_str()))
     {
-        command="rm "+path_tempResult+"/*.grd";
+#ifdef _WIN32
+		//define something for Windows (32-bit and 64-bit, this part is common)
+		command = "del " + path_tempResult + "\\*.vtk";
+#else
+		command = "rm " + path_tempResult + "/*.grd";
+#endif
+        //command="rm "+path_tempResult+"/*.grd";
         if(!system(command.c_str()))
         {
-            cout<<GREEN<<"Clean .grd file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
+            cout<<GREEN<<"Clean .vtk file in temporary folder: "<<COLOR_DEFALUT<<path_tempResult<<endl;
         }
     }else{
         cout<<GREEN<<"Create directory to save temporary resut: "<<COLOR_DEFALUT<<path_tempResult<<endl;
@@ -2211,9 +2234,9 @@ void DWC_s2p_LandweberIter(double** G,double* x, double* b,
             error_MHS += pow(gk[i], 2.0);
         }
         printf("The %dth iteration  ,error:", k);
-        cout<<"\033[32m";    
+        cout<<GREEN;    
         printf("%lf\t", error_MHS);
-        cout<<"\033[0m";
+        cout<< COLOR_DEFALUT;
         printf("%lf\t%lf\n", aerfak, thetak);
         error_vector[k] = error_MHS;
         if (error_MHS<daierta)

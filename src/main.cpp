@@ -14,17 +14,24 @@ bool isNum(string str)
 }
 int main(int argc, char* argv[])
 {
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    if(w.ws_col>119)
-    {
-        StartText_artASCII();
-    }else
-    {
-        StartText();
-    }
-    helpINFO();
-    
+#ifdef _WIN32
+	helpINFO();
+	StartText();
+	StartText_artASCII();
+#else
+	struct winsize w;
+	ioctl(0, TIOCGWINSZ, &w);
+	if (w.ws_col > 119)
+	{
+		StartText_artASCII();
+	}
+	else
+	{
+		StartText();
+	}
+	helpINFO();
+#endif
+
     //********************************************
     string inputfilename;
     string outputfilename;

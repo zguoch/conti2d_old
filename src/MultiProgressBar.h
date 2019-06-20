@@ -3,7 +3,11 @@
 #include "stdio.h"
 #include <iostream>
 #include <vector>
+#ifdef _WIN32
+#include "windows.h"
+#else 
 #include <sys/ioctl.h>
+#endif
 #include <stdio.h>
 using namespace std;
 #define COLOR_BAR_PURPLE 0
