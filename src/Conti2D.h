@@ -19,6 +19,9 @@ using namespace std;
 #include "FFTN.h"
 #include "MultiProgressBar.h"
 #include <netcdf.h>
+#ifdef _WIN32
+#include "windows.h"
+#endif
 #define ERRCODE 2
 #define ERR(e) {cout<<"Error:"<<nc_strerror(e)<<endl; exit(ERRCODE);}
 
